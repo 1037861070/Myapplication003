@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/background_login">
+    <!-- padding 内边距   layout_margin 外边距
+        android:layout_alignParentTop 布局的位置是否处于顶部 -->
+
+    <RelativeLayout
+        android:id="@+id/login_div"
+        android:layout_width="fill_parent"
+        android:layout_height="221dp"
+
+        android:layout_alignEnd="@+id/signin_button"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="14dp"
+        android:background="@drawable/background_login_div_bg"
+        android:padding="15dip">
+        <!-- 账号 -->
+        <TextView
+            android:id="@+id/login_user_input"
+
+            android:layout_width="30dp"
+            android:layout_height="wrap_content"
+
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:text="账号"
+            android:textColor="#000000" />
+
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_alignParentStart="true"
+            android:layout_alignTop="@+id/password_edit"
+            android:background="@drawable/test" />
+
+        <EditText
+            android:id="@+id/username_edit"
+            android:layout_width="fill_parent"
+            android:layout_height="35dp"
+
+            android:layout_alignTop="@+id/imageView2"
+            android:layout_toEndOf="@+id/login_user_input"
+            android:background="@drawable/background_login_div_bg"
+            android:hint="学号由13位数字组成"
+            android:inputType="text"
+            android:singleLine="true"
+            android:textColorHint="#FFB6C1" />
+        <!-- 密码 text -->
+        <ImageView
+            android:id="@+id/imageView2"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_alignEnd="@+id/login_password_input"
+            android:layout_below="@+id/login_user_input"
+            android:layout_marginTop="15dp"
+            android:background="@drawable/icon_1" />
+
+        <TextView
+            android:id="@+id/login_password_input"
+
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:text="密码"
+            android:textColor="#000000" />
+
+        <EditText
+            android:id="@+id/password_edit"
+            android:layout_width="fill_parent"
+            android:layout_height="35dp"
+            android:layout_above="@+id/radioButton"
+            android:layout_toEndOf="@+id/imageView"
+            android:background="@drawable/background_login_div_bg"
+            android:hint="密码由6-15位数字加字母组成"
+            android:inputType="textPassword"
+            android:password="true"
+            android:singleLine="true"
+            android:textColorHint="#FFB6C1" />
+
+        <RadioButton
+            android:id="@+id/radioButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_marginStart="26dp"
+            android:layout_toEndOf="@+id/imageView"
+            android:text="学生" />
+
+        <RadioButton
+            android:id="@+id/radioButton2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="52dp"
+            android:text="老师" />
+
+        <!-- 登录button -->
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/register_link"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            android:layout_alignBottom="@+id/signin_button"
+            android:layout_alignParentStart="true"
+            android:layout_marginStart="34dp"
+            android:text="没有账号？注册"
+            android:textColor="#D2691E"
+            android:textColorLink="#D2691E" />
+
+        <TextView
+            android:id="@+id/forget_link"
+            android:layout_width="100dp"
+            android:layout_height="20dp"
+            android:layout_alignParentTop="true"
+            android:layout_alignStart="@+id/register_link"
+
+            android:text="忘记密码？找回"
+
+            android:textColor="#D2691E" />
+
+
+        <Button
+            android:id="@+id/signin_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginEnd="15dp"
+            android:background="@drawable/button_style"
+
+            android:text="登录" />
+
+        <ImageView
+            android:id="@+id/miniTwitter_logo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/register_link"
+            android:layout_marginTop="11dp"
+            android:src="@drawable/lo" />
+    </RelativeLayout>
+
+</LinearLayout>
