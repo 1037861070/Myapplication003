@@ -76,5 +76,14 @@ private use_info user;
                 startActivity(intent);
             }
         });
+        //签到
+        TextView t2=findViewById(R.id.sign_record);
+        t2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent=new Intent(Student_Main.this,Sign.class);
+                startActivity(intent);
+            }
+        });
     }
 }

@@ -85,7 +85,7 @@ private MyDatabaseHelper dbhelper;
     btn2.setOnClickListener(new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            Intent intent=new Intent(Modify_info.this,Modify_info.class);
+            Intent intent=new Intent(Modify_info.this,Student_Main.class);
             intent.putExtra("user",user);
             startActivity(intent);
         }
