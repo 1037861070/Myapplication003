@@ -81,7 +81,7 @@ private use_info user;
         t2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent=new Intent(Student_Main.this,Sign.class);
+                Intent intent=new Intent(Student_Main.this,Main2Activity.class);
                 startActivity(intent);
             }
         });
