@@ -4,9 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.a10378.myapplication003.Student.Main2Activity">
-
-
+    tools:context="com.example.a10378.myapplication003.Student.CameraAlbum">
     <LinearLayout
         android:layout_width="380dp"
         android:layout_height="480dp"
@@ -19,18 +17,17 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
-        <com.baidu.mapapi.map.MapView
-            android:id="@+id/bmapview"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:clickable="true"/>
 
-        <TextView
-            android:id="@+id/position_text_view"
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/takephoto"
+            android:text="takephoto"/>
+        <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="TextView"
-            android:textSize="16dp"
-            android:visibility="gone"/>
+            android:id="@+id/picture"
+            android:layout_gravity="center_horizontal"/>
     </LinearLayout>
 </android.support.constraint.ConstraintLayout>

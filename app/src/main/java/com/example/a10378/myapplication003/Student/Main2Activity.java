@@ -1,4 +1,4 @@
-package com.example.a10378.myapplication003;
+package com.example.a10378.myapplication003.Student;
 
 import android.Manifest;
 import android.content.Context;
@@ -15,7 +15,6 @@ import android.widget.Toast;
 
 import com.baidu.location.BDAbstractLocationListener;
 import com.baidu.location.BDLocation;
-import com.baidu.location.BDLocationListener;
 import com.baidu.location.LocationClient;
 import com.baidu.location.LocationClientOption;
 import com.baidu.mapapi.SDKInitializer;
@@ -25,6 +24,7 @@ import com.baidu.mapapi.map.MapStatusUpdateFactory;
 import com.baidu.mapapi.map.MapView;
 import com.baidu.mapapi.map.MyLocationData;
 import com.baidu.mapapi.model.LatLng;
+import com.example.a10378.myapplication003.R;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,6 +51,13 @@ private TextView posionText;
     }
 
     @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        locationClient.stop();
+        mapView.onDestroy();
+        baiduMap.setMyLocationEnabled(false);
+    }
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         locationClient=new LocationClient(getApplicationContext());
@@ -60,6 +67,7 @@ private TextView posionText;
         setContentView(R.layout.activity_main2);
         mapView=findViewById(R.id.bmapview);//获取地图view实例
         baiduMap=mapView.getMap();//得到当前地图实例
+
         baiduMap.setMyLocationEnabled(true);//显示当前我的信息到地图上
         posionText=(TextView) findViewById(R.id.position_text_view);
         List<String> permissionList=new ArrayList<>();
@@ -120,13 +128,6 @@ private TextView posionText;
         locationClient.setLocOption(option);
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        locationClient.stop();
-        mapView.onDestroy();
-        baiduMap.setMyLocationEnabled(false);
-    }
 //权限判定是否符合条件
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -155,16 +156,18 @@ private TextView posionText;
 public class MyLocationListener extends BDAbstractLocationListener{
     @Override
     public void onReceiveLocation(final BDLocation bdLocation) {
-        if (bdLocation.getLocType()==BDLocation.TypeNetWorkLocation||
-                bdLocation.getLocType()==BDLocation.TypeGpsLocation){
+        if (bdLocation.getLocType() == BDLocation.TypeNetWorkLocation ||
+                bdLocation.getLocType() == BDLocation.TypeGpsLocation) {
+
             navigateTo(bdLocation);
+
         }
 
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
 
-                StringBuilder currenPosition =new StringBuilder();
+                StringBuilder currenPosition = new StringBuilder();
                 currenPosition.append("维度：").append(bdLocation.getLatitude()).append("\n");
                 currenPosition.append("经度：").append(bdLocation.getLongitude()).append("\n");
                 currenPosition.append("国家：").append(bdLocation.getCountry()).append("\n");
@@ -172,16 +175,20 @@ public class MyLocationListener extends BDAbstractLocationListener{
                 currenPosition.append("市：").append(bdLocation.getDistrict()).append("\n");
                 currenPosition.append("街道：").append(bdLocation.getStreet()).append("\n");
                 currenPosition.append("定位方式：");
-                if (bdLocation.getLocType()==BDLocation.TypeGpsLocation){
+                if (bdLocation.getLocType() == BDLocation.TypeGpsLocation) {
                     currenPosition.append("GPS");
-                }else if (bdLocation.getLocType()==BDLocation.TypeNetWorkLocation){
+                } else if (bdLocation.getLocType() == BDLocation.TypeNetWorkLocation) {
                     currenPosition.append("网络");
                 }
-                Log.d("描述：",String.valueOf(bdLocation.getLocType())+"  "
-                        +currenPosition.toString());
+                Toast.makeText(Main2Activity.this, String.valueOf(bdLocation.getLocType())+" "+
+                        currenPosition.toString() , Toast.LENGTH_LONG).show();
+                Log.d("描述：", String.valueOf(bdLocation.getLocType()) + "  "
+                        + currenPosition.toString());
                 posionText.setText(currenPosition);
             }
+
         });
+
     }
     public void onConnectHotSpotMessage(String s,int i){}
 

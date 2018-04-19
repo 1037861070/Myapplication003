@@ -1,17 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.a10378.myapplication003">
-<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
-    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE"/>
-    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS"/>
-    <uses-permission android:name="android.permission.WAKE_LOCK"/>
-    <uses-permission android:name="android.permission.READ_LOGS" >    </uses-permission>
+
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.READ_LOGS"></uses-permission>
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.WRITE_SETTINGS" />
 
@@ -22,9 +23,19 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <provider
+            android:authorities="com.example.a10378.myapplication003.Student.fileprovider"
+            android:name="android.support.v4.content.FileProvider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths"/>
+        </provider>
         <meta-data
             android:name="com.baidu.lbsapi.API_KEY"
-            android:value="qNkIutwba30xdrLEDf88FacIKc7sFvzc"/>
+            android:value="qNkIutwba30xdrLEDf88FacIKc7sFvzc" />
+
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -32,20 +43,23 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".register" />
-        <activity android:name=".Student_Main" />
-        <activity android:name=".Leave" />
-        <activity android:name=".Modify_Pswd" />
-        <activity android:name=".Find_Pswd" />
-        <activity android:name=".Modify_info" />
-        <activity android:name=".Sign" />
-        <activity android:name=".Teacher_Main" />
-        <activity android:name=".Sign_info" />
-        <activity android:name=".Main2Activity"></activity>
-        <service android:name="com.baidu.location.f"
+        <activity android:name=".Student.register" />
+        <activity android:name=".Student.Student_Main" />
+        <activity android:name=".Student.Leave" />
+        <activity android:name=".Student.Modify_Pswd" />
+        <activity android:name=".Student.Find_Pswd" />
+        <activity android:name=".Student.Modify_info" />
+        <activity android:name=".Student.Sign" />
+        <activity android:name=".Teacher.Teacher_Main" />
+        <activity android:name=".Teacher.show_info" />
+        <activity android:name=".Student.Main2Activity" />
+
+        <service
+            android:name="com.baidu.location.f"
             android:enabled="true"
-            android:process=":remote">
-        </service>
+            android:process=":remote"></service>
+
+        <activity android:name=".Student.CameraAlbum"></activity>
     </application>
 
 </manifest>

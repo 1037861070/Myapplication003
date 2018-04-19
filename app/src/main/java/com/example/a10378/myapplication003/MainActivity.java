@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.drawable.Drawable;
-import android.graphics.drawable.Icon;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -17,6 +16,14 @@ import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.example.a10378.myapplication003.Info_DB.MyDatabaseHelper;
+import com.example.a10378.myapplication003.Info_DB.use_info;
+import com.example.a10378.myapplication003.Student.Find_Pswd;
+import com.example.a10378.myapplication003.Student.Main2Activity;
+import com.example.a10378.myapplication003.Student.Student_Main;
+import com.example.a10378.myapplication003.Student.register;
+import com.example.a10378.myapplication003.Teacher.Teacher_Main;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -192,7 +199,7 @@ private RadioButton radioButton1=null;
         textView2.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view) {
-                Intent intent=new Intent(MainActivity.this,Find_Pswd.class);
+                Intent intent=new Intent(MainActivity.this,Main2Activity.class);
                 startActivity(intent);
             }
         });

@@ -24,12 +24,14 @@
 
         <ImageView
             android:id="@+id/miniTwitter_logo"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="209dp"
             android:layout_alignParentStart="true"
+            android:layout_marginBottom="8dp"
             android:layout_marginEnd="8dp"
             android:scaleType="fitXY"
             android:src="@drawable/student_1"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
