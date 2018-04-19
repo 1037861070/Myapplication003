@@ -1,7 +1,9 @@
 package com.example.a10378.myapplication003;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.pm.PackageManager;
+import android.location.LocationManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -28,13 +30,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Main2Activity extends AppCompatActivity {
-public LocationClient locationClient;
+public LocationClient locationClient=null;
 private MapView mapView;
 private BaiduMap baiduMap;
 private boolean isFirstlocate=true;
 private TextView posionText;
-    private  BDLocation bdLocation;
+    private  BDLocation dLocation;
 
+    public BDAbstractLocationListener myListener = new MyLocationListener();
     @Override
     protected void onResume() {
         super.onResume();
@@ -52,38 +55,7 @@ private TextView posionText;
         super.onCreate(savedInstanceState);
         locationClient=new LocationClient(getApplicationContext());
 
-        locationClient.registerLocationListener(new BDAbstractLocationListener() {
-            @Override
-            public void onReceiveLocation(final BDLocation bdLocation) {
-                if (bdLocation.getLocType()==BDLocation.TypeNetWorkLocation||
-                        bdLocation.getLocType()==BDLocation.TypeGpsLocation){
-                    navigateTo(bdLocation);
-                }
-
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-
-                        StringBuilder currenPosition =new StringBuilder();
-                        currenPosition.append("维度：").append(bdLocation.getLatitude()).append("\n");
-                        currenPosition.append("经度：").append(bdLocation.getLongitude()).append("\n");
-                        currenPosition.append("国家：").append(bdLocation.getCountry()).append("\n");
-                        currenPosition.append("省：").append(bdLocation.getCity()).append("\n");
-                        currenPosition.append("市：").append(bdLocation.getDistrict()).append("\n");
-                        currenPosition.append("街道：").append(bdLocation.getStreet()).append("\n");
-                        currenPosition.append("定位方式：");
-                        if (bdLocation.getLocType()==BDLocation.TypeGpsLocation){
-                            currenPosition.append("GPS");
-                        }else if (bdLocation.getLocType()==BDLocation.TypeNetWorkLocation){
-                            currenPosition.append("网络");
-                        }
-                        Log.d("描述：",currenPosition.toString());
-                        posionText.setText(currenPosition);
-                    }
-                });
-
-            }
-        });//注册监听函数
+        locationClient.registerLocationListener(myListener);//注册监听函数
         SDKInitializer.initialize(getApplicationContext());
         setContentView(R.layout.activity_main2);
         mapView=findViewById(R.id.bmapview);//获取地图view实例
@@ -91,6 +63,10 @@ private TextView posionText;
         baiduMap.setMyLocationEnabled(true);//显示当前我的信息到地图上
         posionText=(TextView) findViewById(R.id.position_text_view);
         List<String> permissionList=new ArrayList<>();
+        LocationManager locManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
+        if(!locManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
+            // 未打开位置开关，可能导致定位失败或定位不准，提示用户或做相应处理
+        }
         if (ContextCompat.checkSelfPermission(Main2Activity.this, Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED){
             permissionList.add(Manifest.permission.ACCESS_FINE_LOCATION);
@@ -136,9 +112,11 @@ private TextView posionText;
     //每五秒更新自己位置
    private void initLocation(){
         LocationClientOption option=new LocationClientOption();
+        option.setCoorType("bd09ll");
         option.setScanSpan(5000);
-        option.setLocationMode(LocationClientOption.LocationMode.Hight_Accuracy);
         option.setIsNeedAddress(true);
+        option.setLocationMode(LocationClientOption.LocationMode.Hight_Accuracy);
+
         locationClient.setLocOption(option);
     }
 
@@ -174,9 +152,14 @@ private TextView posionText;
        }
     }
     //获取当前位置
-public class MyLocationListenner implements BDLocationListener{
+public class MyLocationListener extends BDAbstractLocationListener{
     @Override
     public void onReceiveLocation(final BDLocation bdLocation) {
+        if (bdLocation.getLocType()==BDLocation.TypeNetWorkLocation||
+                bdLocation.getLocType()==BDLocation.TypeGpsLocation){
+            navigateTo(bdLocation);
+        }
+
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -194,7 +177,8 @@ public class MyLocationListenner implements BDLocationListener{
                 }else if (bdLocation.getLocType()==BDLocation.TypeNetWorkLocation){
                     currenPosition.append("网络");
                 }
-                Log.d("描述：",currenPosition.toString());
+                Log.d("描述：",String.valueOf(bdLocation.getLocType())+"  "
+                        +currenPosition.toString());
                 posionText.setText(currenPosition);
             }
         });

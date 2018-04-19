@@ -34,6 +34,7 @@ public class MyDatabaseHelper extends SQLiteOpenHelper{
     public  static final String leave="CREATE TABLE `leave` (\n" +
             "\t`leave_id`\tINTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,\n" +
             "\t`id_number`\tTEXT,\n" +
+            "\t`location`\tTEXT,\n" +
             "\t`start_time`\tTEXT,\n" +
             "\t`end_time`\tTEXT,\n" +
             "\t`cause`\tTEXT\n" +

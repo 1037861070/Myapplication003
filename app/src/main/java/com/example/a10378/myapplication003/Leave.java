@@ -18,6 +18,7 @@ import android.widget.Toast;
 import java.util.Calendar;
 
 public class Leave extends AppCompatActivity {
+    private use_info user;
 private Intent intent1=null;
 private MyDatabaseHelper dbhelper;
 private EditText editText1=null;
@@ -75,8 +76,9 @@ private int flag=-1;
                 String s2=editText2.getText().toString();
                 String s3=editText3.getText().toString();
                // use_info user=(use_info)getIntent().getSerializableExtra("user");
-               intent1=getIntent();
-               String id_number=intent1.getStringExtra("id_number");
+
+                user=(use_info) getIntent().getSerializableExtra("user");
+               String id_number=user.getId_number();
                 //Toast.makeText(Leave.this, id_number, Toast.LENGTH_LONG).show();
                 SQLiteDatabase db=dbhelper.getWritableDatabase();//得到数据库对象，已有则不创建
                 switch (view.getId()){
@@ -91,6 +93,7 @@ private int flag=-1;
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
                                     Intent intent = new Intent(Leave.this, Leave.class);
+                                    intent.putExtra("user",user);
                                     startActivity(intent);
                                 }
                             });
@@ -109,6 +112,7 @@ private int flag=-1;
                         db.close();
                         Toast.makeText(Leave.this, "填写成功！", Toast.LENGTH_SHORT).show();
                         Intent intent = new Intent(Leave.this, Student_Main.class);
+                        intent.putExtra("user",user);
                         startActivity(intent);
 
                         break;

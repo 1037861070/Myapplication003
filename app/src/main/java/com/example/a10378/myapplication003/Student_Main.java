@@ -26,11 +26,14 @@ private use_info user;
          user=(use_info) getIntent().getSerializableExtra("user");
         //Toast.makeText(this,user.getId_number()+user.getPassword(),Toast.LENGTH_SHORT).show();
         TextView textView1=findViewById(R.id.Leave_record);
+        //请假操作
         textView1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
                 Intent intent=new Intent(Student_Main.this,Leave.class);
-                intent.putExtra("id_number",user.getId_number());
+                intent.putExtra("user",user);
+
                 startActivity(intent);
             }
         });
