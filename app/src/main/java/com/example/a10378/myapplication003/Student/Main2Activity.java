@@ -2,6 +2,7 @@ package com.example.a10378.myapplication003.Student;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.LocationManager;
 import android.support.annotation.NonNull;
@@ -10,6 +11,8 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -24,6 +27,7 @@ import com.baidu.mapapi.map.MapStatusUpdateFactory;
 import com.baidu.mapapi.map.MapView;
 import com.baidu.mapapi.map.MyLocationData;
 import com.baidu.mapapi.model.LatLng;
+import com.example.a10378.myapplication003.Info_DB.location_info;
 import com.example.a10378.myapplication003.R;
 
 import java.util.ArrayList;
@@ -35,7 +39,8 @@ private MapView mapView;
 private BaiduMap baiduMap;
 private boolean isFirstlocate=true;
 private TextView posionText;
-    private  BDLocation dLocation;
+private location_info Location;
+private BDLocation bdLocation;
 
     public BDAbstractLocationListener myListener = new MyLocationListener();
     @Override
@@ -94,16 +99,28 @@ private TextView posionText;
         else {
             requestLocation();
         }
+        Button btn=findViewById(R.id.baidumapbutton);
+        btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(Main2Activity.this,bdLocation.getCity(),Toast.LENGTH_LONG).show();
+                Intent intent=new Intent(Main2Activity.this,Leave.class);
+                intent.putExtra("location",bdLocation);
+                startActivity(intent);
+            }
+        });
         }
     private void navigateTo(BDLocation location){
         //显示百度地图位置
         if (isFirstlocate){
+            bdLocation=location;
             LatLng ll=new LatLng(location.getLatitude(),location.getLongitude());
             MapStatusUpdate update= MapStatusUpdateFactory.newLatLng(ll);
             baiduMap.animateMapStatus(update);
             update=MapStatusUpdateFactory.zoomTo(16f);
             baiduMap.animateMapStatus(update);
             isFirstlocate=false;
+
         }
         MyLocationData.Builder locationBuild=new MyLocationData.Builder();
         locationBuild.latitude(location.getLatitude());//得到当前位置经度
@@ -115,16 +132,16 @@ private TextView posionText;
 
         initLocation();
         locationClient.start();
+
     }
 
     //每五秒更新自己位置
    private void initLocation(){
         LocationClientOption option=new LocationClientOption();
         option.setCoorType("bd09ll");
-        option.setScanSpan(5000);
+        //option.setScanSpan(5000);
         option.setIsNeedAddress(true);
         option.setLocationMode(LocationClientOption.LocationMode.Hight_Accuracy);
-
         locationClient.setLocOption(option);
     }
 
@@ -158,15 +175,9 @@ public class MyLocationListener extends BDAbstractLocationListener{
     public void onReceiveLocation(final BDLocation bdLocation) {
         if (bdLocation.getLocType() == BDLocation.TypeNetWorkLocation ||
                 bdLocation.getLocType() == BDLocation.TypeGpsLocation) {
-
             navigateTo(bdLocation);
 
         }
-
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-
                 StringBuilder currenPosition = new StringBuilder();
                 currenPosition.append("维度：").append(bdLocation.getLatitude()).append("\n");
                 currenPosition.append("经度：").append(bdLocation.getLongitude()).append("\n");
@@ -174,6 +185,7 @@ public class MyLocationListener extends BDAbstractLocationListener{
                 currenPosition.append("省：").append(bdLocation.getCity()).append("\n");
                 currenPosition.append("市：").append(bdLocation.getDistrict()).append("\n");
                 currenPosition.append("街道：").append(bdLocation.getStreet()).append("\n");
+
                 currenPosition.append("定位方式：");
                 if (bdLocation.getLocType() == BDLocation.TypeGpsLocation) {
                     currenPosition.append("GPS");
@@ -184,11 +196,6 @@ public class MyLocationListener extends BDAbstractLocationListener{
                         currenPosition.toString() , Toast.LENGTH_LONG).show();
                 Log.d("描述：", String.valueOf(bdLocation.getLocType()) + "  "
                         + currenPosition.toString());
-                posionText.setText(currenPosition);
-            }
-
-        });
-
     }
     public void onConnectHotSpotMessage(String s,int i){}
 
