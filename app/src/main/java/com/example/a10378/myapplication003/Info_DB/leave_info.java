@@ -1,10 +1,12 @@
 package com.example.a10378.myapplication003.Info_DB;
 
+import java.io.Serializable;
+
 /**
  * Created by Administrator on 2018/4/19.
  */
 
-public class leave_info {
+public class leave_info implements Serializable {
     private String id_number;
     private String start_time;
     private String end_time;

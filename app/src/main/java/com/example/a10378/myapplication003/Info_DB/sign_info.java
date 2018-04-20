@@ -1,10 +1,12 @@
 package com.example.a10378.myapplication003.Info_DB;
 
+import java.io.Serializable;
+
 /**
  * Created by Administrator on 2018/4/19.
  */
 
-public class sign_info {
+public class sign_info implements Serializable {
     private String id_number;
     private String name;
     private int status;
