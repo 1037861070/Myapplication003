@@ -12,6 +12,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.example.a10378.myapplication003.Info_DB.MyDatabaseHelper;
@@ -37,6 +38,15 @@ private int flag=-1;
         editText1=findViewById(R.id.leave_starttime);
         editText2=findViewById(R.id.leave_endtime);
         editText3=findViewById(R.id.leave_edit);
+        ImageView imageView=findViewById(R.id.leave_link);
+        imageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Leave.this, Main2Activity.class);
+                intent.putExtra("user",user);
+                startActivity(intent);
+            }
+        });
         //填写开始日期
       editText1.setOnClickListener(new View.OnClickListener() {
           @Override
@@ -86,7 +96,7 @@ private int flag=-1;
                 SQLiteDatabase db=dbhelper.getWritableDatabase();//得到数据库对象，已有则不创建
                 switch (view.getId()){
                     case R.id.leave_button:
-                        if (s3.length()==0)
+                        if (s3.length()==0||s1.length()==0||s2.length()==0)
                         {
                             AlertDialog.Builder dialog=new AlertDialog.Builder(Leave.this);
                             dialog.setTitle("提示");

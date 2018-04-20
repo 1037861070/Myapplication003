@@ -8,8 +8,9 @@
 
 
     <LinearLayout
+        android:id="@+id/linearLayout"
         android:layout_width="380dp"
-        android:layout_height="480dp"
+        android:layout_height="450dp"
         android:layout_marginBottom="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
@@ -19,11 +20,12 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
+
         <com.baidu.mapapi.map.MapView
             android:id="@+id/bmapview"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:clickable="true"/>
+            android:clickable="true" />
 
         <TextView
             android:id="@+id/position_text_view"
@@ -31,6 +33,26 @@
             android:layout_height="wrap_content"
             android:text="TextView"
             android:textSize="16dp"
-            android:visibility="gone"/>
+            android:visibility="gone" />
     </LinearLayout>
+
+    <Button
+        android:id="@+id/baidumapbutton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginBottom="8dp"
+
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/button_style"
+        android:text="登录"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0" />
+
 </android.support.constraint.ConstraintLayout>

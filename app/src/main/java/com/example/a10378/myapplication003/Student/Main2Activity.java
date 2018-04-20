@@ -100,11 +100,13 @@ private BDLocation bdLocation;
             requestLocation();
         }
         Button btn=findViewById(R.id.baidumapbutton);
+
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Toast.makeText(Main2Activity.this,bdLocation.getCity(),Toast.LENGTH_LONG).show();
                 Intent intent=new Intent(Main2Activity.this,Leave.class);
+                locationClient.stop();
                 intent.putExtra("location",bdLocation);
                 startActivity(intent);
             }
