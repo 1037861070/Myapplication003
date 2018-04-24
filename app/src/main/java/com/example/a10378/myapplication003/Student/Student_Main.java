@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.View;
 
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.a10378.myapplication003.MainActivity;
 import com.example.a10378.myapplication003.Info_DB.MyDatabaseHelper;
@@ -29,6 +30,16 @@ private use_info user;
         dbhelper.getWritableDatabase();   //创建数据库
          user=(use_info) getIntent().getSerializableExtra("user");
         //Toast.makeText(this,user.getId_number()+user.getPassword(),Toast.LENGTH_SHORT).show();
+        SQLiteDatabase db=dbhelper.getWritableDatabase();
+        //封装学生信息
+
+        Cursor cursor=db.rawQuery("select* from user where id_number =? ",new String[]{user.getId_number()});
+        if (cursor.moveToFirst()) {
+            user.setName(cursor.getString(cursor.getColumnIndex("name")));
+            user.setClassname(cursor.getString(cursor.getColumnIndex("class")));
+            user.setSign_number(cursor.getInt(cursor.getColumnIndex("sign_number")));
+        }
+        cursor.close();
         TextView textView1=findViewById(R.id.Leave_record);
         //请假操作
         textView1.setOnClickListener(new View.OnClickListener() {
@@ -37,7 +48,6 @@ private use_info user;
 
                 Intent intent=new Intent(Student_Main.this,Leave.class);
                 intent.putExtra("user",user);
-
                 startActivity(intent);
             }
         });
@@ -46,24 +56,8 @@ private use_info user;
         textView2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-                SQLiteDatabase db=dbhelper.getWritableDatabase();
-                use_info user1=user;
-                Log.d("11111",user1.getId_number()+user1.getPassword());
-
                 switch (view.getId()){
                     case R.id.info_management:
-
-
-                        Cursor cursor=db.rawQuery("select* from user where id_number =? ",new String[]{user.getId_number()});
-                        if (cursor.moveToFirst()) {
-                            user1.setName(cursor.getString(cursor.getColumnIndex("name")));
-                            user1.setClassname(cursor.getString(cursor.getColumnIndex("class")));
-                            user1.setSign_number(cursor.getInt(cursor.getColumnIndex("sign_number")));
-                        }
-                        cursor.close();
-                        Log.d("22222",user1.getClassname()+user1.getSign_number());
-
                         Intent intent=new Intent(Student_Main.this,Modify_info.class);
                         intent.putExtra("user",user);
                         startActivity(intent);
@@ -83,13 +77,29 @@ private use_info user;
                 startActivity(intent);
             }
         });
-        //签到
+        //跳转签到界面
         TextView t2=findViewById(R.id.sign_record);
         t2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent=new Intent(Student_Main.this,Main2Activity.class);
+                Intent intent=new Intent(Student_Main.this,Sign.class);
+                Toast.makeText(Student_Main.this,user.getId_number()+user.getPassword(),Toast.LENGTH_SHORT).show();
+                intent.putExtra("user",user);
                 startActivity(intent);
+                /*
+                SQLiteDatabase db=dbhelper.getWritableDatabase();
+                Cursor cursor=db.rawQuery("select* from leave where id_number =? ",new String[]{user.getId_number()});
+                if (cursor.moveToFirst()) {
+                    do {
+                        String name=cursor.getString(cursor.getColumnIndex("name"));
+                        String location =cursor.getString(cursor.getColumnIndex("location"));
+                        Toast.makeText(Student_Main.this,name+location, Toast.LENGTH_SHORT).show();
+                    }while (cursor.moveToNext());
+
+                }
+                cursor.close();
+                */
+
             }
         });
     }

@@ -1,9 +1,12 @@
 package com.example.a10378.myapplication003.Student;
 
 import android.Manifest;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.location.LocationManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -27,7 +30,9 @@ import com.baidu.mapapi.map.MapStatusUpdateFactory;
 import com.baidu.mapapi.map.MapView;
 import com.baidu.mapapi.map.MyLocationData;
 import com.baidu.mapapi.model.LatLng;
+import com.example.a10378.myapplication003.Info_DB.MyDatabaseHelper;
 import com.example.a10378.myapplication003.Info_DB.location_info;
+import com.example.a10378.myapplication003.Info_DB.use_info;
 import com.example.a10378.myapplication003.R;
 
 import java.util.ArrayList;
@@ -41,7 +46,9 @@ private boolean isFirstlocate=true;
 private TextView posionText;
 private location_info Location;
 private BDLocation bdLocation;
-
+private MyDatabaseHelper dbhelper;
+private use_info user;
+private int flag=0;
     public BDAbstractLocationListener myListener = new MyLocationListener();
     @Override
     protected void onResume() {
@@ -65,6 +72,8 @@ private BDLocation bdLocation;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        user=(use_info) getIntent().getSerializableExtra("user");
+        dbhelper=new MyDatabaseHelper(this,"dbst.db",null,2);
         locationClient=new LocationClient(getApplicationContext());
 
         locationClient.registerLocationListener(myListener);//注册监听函数
@@ -104,11 +113,29 @@ private BDLocation bdLocation;
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(Main2Activity.this,bdLocation.getCity(),Toast.LENGTH_LONG).show();
-                Intent intent=new Intent(Main2Activity.this,Leave.class);
-                locationClient.stop();
-                intent.putExtra("location",bdLocation);
-                startActivity(intent);
+                if (flag==0){
+                    SQLiteDatabase db=dbhelper.getWritableDatabase();
+                    StringBuilder currenPosition = new StringBuilder();
+                    currenPosition.append(bdLocation.getProvince()).append(" ");
+                    currenPosition.append(bdLocation.getCity()).append(" ");
+                    currenPosition.append(bdLocation.getDistrict()).append(" ");
+                    currenPosition.append(bdLocation.getStreet());
+                    String s1=currenPosition.toString();
+                    ContentValues values=new ContentValues();
+                    values.put("location",s1);
+                    values.put("id_number",user.getId_number());
+                    dbhelper.insert(db,"leave",values);
+                    values.clear();
+                    db.close();
+                    Toast.makeText(Main2Activity.this,s1,
+                            Toast.LENGTH_LONG).show();
+                    flag=1;
+                }
+               else {
+                    Toast.makeText(Main2Activity.this, "已写入！请勿重复点击！"+bdLocation.getCity(),
+                            Toast.LENGTH_LONG).show();
+                }
+
             }
         });
         }
@@ -116,6 +143,9 @@ private BDLocation bdLocation;
         //显示百度地图位置
         if (isFirstlocate){
             bdLocation=location;
+
+            //SQLiteDatabase db=dbhelper.getWritableDatabase();//得到数据库对象，已有则不创建
+
             LatLng ll=new LatLng(location.getLatitude(),location.getLongitude());
             MapStatusUpdate update= MapStatusUpdateFactory.newLatLng(ll);
             baiduMap.animateMapStatus(update);
@@ -184,8 +214,9 @@ public class MyLocationListener extends BDAbstractLocationListener{
                 currenPosition.append("维度：").append(bdLocation.getLatitude()).append("\n");
                 currenPosition.append("经度：").append(bdLocation.getLongitude()).append("\n");
                 currenPosition.append("国家：").append(bdLocation.getCountry()).append("\n");
-                currenPosition.append("省：").append(bdLocation.getCity()).append("\n");
-                currenPosition.append("市：").append(bdLocation.getDistrict()).append("\n");
+                currenPosition.append("省：").append(bdLocation.getProvince()).append("\n");
+                currenPosition.append("市：").append(bdLocation.getCity()).append("\n");
+                currenPosition.append("区：").append(bdLocation.getDistrict()).append("\n");
                 currenPosition.append("街道：").append(bdLocation.getStreet()).append("\n");
 
                 currenPosition.append("定位方式：");
@@ -194,8 +225,7 @@ public class MyLocationListener extends BDAbstractLocationListener{
                 } else if (bdLocation.getLocType() == BDLocation.TypeNetWorkLocation) {
                     currenPosition.append("网络");
                 }
-                Toast.makeText(Main2Activity.this, String.valueOf(bdLocation.getLocType())+" "+
-                        currenPosition.toString() , Toast.LENGTH_LONG).show();
+                Toast.makeText(Main2Activity.this,currenPosition.toString() , Toast.LENGTH_LONG).show();
                 Log.d("描述：", String.valueOf(bdLocation.getLocType()) + "  "
                         + currenPosition.toString());
     }

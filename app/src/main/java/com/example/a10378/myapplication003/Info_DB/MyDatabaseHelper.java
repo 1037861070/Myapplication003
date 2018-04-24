@@ -36,7 +36,7 @@ public class MyDatabaseHelper extends SQLiteOpenHelper{
             "\t`leave_id`\tINTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,\n" +
             "\t`id_number`\tTEXT,\n" +
             "\t`name`\tTEXT,\n" +
-            "\t`location`\tTEXT,\n" +
+            "\t` `\tTEXT,\n" +
             "\t`start_time`\tTEXT,\n" +
             "\t`end_time`\tTEXT,\n" +
             "\t`cause`\tTEXT\n" +

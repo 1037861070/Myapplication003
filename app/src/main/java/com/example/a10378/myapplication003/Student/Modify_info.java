@@ -65,7 +65,7 @@ private MyDatabaseHelper dbhelper;
             String s4=editText4.getText().toString();
             Log.d("333333",s3);
             switch (view.getId()){
-                case R.id.modifyinfo_button:
+                case R.id.modifyinfo_button://更新表操作
                     if (checkall(s1,s2,s4))
                     {
                         ContentValues values=new ContentValues();

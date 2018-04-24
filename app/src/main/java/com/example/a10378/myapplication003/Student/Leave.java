@@ -4,6 +4,7 @@ import android.app.DatePickerDialog;
 import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -28,7 +29,11 @@ private MyDatabaseHelper dbhelper;
 private EditText editText1=null;
 private EditText editText2=null;
 private EditText editText3=null;
+private ImageView imageView=null;
+private EditText editText=null;
 private int flag=-1;
+private int flag2=0;
+private String location="";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -38,13 +43,45 @@ private int flag=-1;
         editText1=findViewById(R.id.leave_starttime);
         editText2=findViewById(R.id.leave_endtime);
         editText3=findViewById(R.id.leave_edit);
-        ImageView imageView=findViewById(R.id.leave_link);
+         imageView=findViewById(R.id.leave_link);
+        user=(use_info) getIntent().getSerializableExtra("user");
+        //String City=getIntent().getStringExtra("location");
+        Toast.makeText(Leave.this,user.getId_number(),Toast.LENGTH_LONG).show();
+        Button bt2=findViewById(R.id.leave_back);
+        editText=findViewById(R.id.leave_location);
+        bt2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Leave.this, Student_Main.class);
+                intent.putExtra("user",user);
+                startActivity(intent);
+            }
+        });
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(Leave.this, Main2Activity.class);
-                intent.putExtra("user",user);
-                startActivity(intent);
+                    imageView.setVisibility(View.GONE);
+                    editText.setVisibility(View.VISIBLE);
+                    Intent intent = new Intent(Leave.this, Main2Activity.class);
+                    intent.putExtra("user",user);
+                    startActivity(intent);
+            }
+        });
+        editText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SQLiteDatabase db=dbhelper.getWritableDatabase();
+                Cursor cursor=db.rawQuery("select* from leave where id_number =? ",new String[]{user.getId_number()});
+                if (cursor.moveToFirst()) {
+                    do {
+
+                         location=cursor.getString(cursor.getColumnIndex("location"));
+                        editText.setText("当前位置:"+location);
+                        Toast.makeText(Leave.this,location, Toast.LENGTH_SHORT).show();
+                    }while (cursor.moveToNext());
+
+                }
+                cursor.close();
             }
         });
         //填写开始日期
@@ -96,11 +133,11 @@ private int flag=-1;
                 SQLiteDatabase db=dbhelper.getWritableDatabase();//得到数据库对象，已有则不创建
                 switch (view.getId()){
                     case R.id.leave_button:
-                        if (s3.length()==0||s1.length()==0||s2.length()==0)
+                        if (s3.length()==0||s1.length()==0||s2.length()==0||location.length()==0)
                         {
                             AlertDialog.Builder dialog=new AlertDialog.Builder(Leave.this);
                             dialog.setTitle("提示");
-                            dialog.setMessage("需输入缘由！");
+                            dialog.setMessage("输入或地址获取不正确！");
                             dialog.setCancelable(false);
                             dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                                 @Override
@@ -117,10 +154,13 @@ private int flag=-1;
 
                         ContentValues values=new ContentValues();
                         values.put("id_number",id_number);
+                        values.put("location",location);
                         values.put("start_time",s1);
                         values.put("end_time",s2);
                         values.put("cause",s3);
-                        dbhelper.insert(db,"leave",values);
+                        values.put("name",user.getName());
+                       // dbhelper.insert(db,"leave",values);
+                        dbhelper.update(db, "leave", values, "id_number=?", new String[]{user.getId_number()});
                         values.clear();
                         db.close();
                         Toast.makeText(Leave.this, "填写成功！", Toast.LENGTH_SHORT).show();
