@@ -24,12 +24,6 @@ public class Find_Pswd extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-        textView2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent=new Intent(Find_Pswd.this,CameraAlbum.class);
-                startActivity(intent);
-            }
-        });
+
     }
 }

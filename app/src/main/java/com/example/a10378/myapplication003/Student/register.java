@@ -47,6 +47,14 @@ public class register extends AppCompatActivity {
         editText3=findViewById(R.id.register_inputidnumber);
         editText4=findViewById(R.id.register_inputpsd);
         editText5=findViewById(R.id.register_input_aginpsd);
+        Button button=findViewById(R.id.register_back);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent=new Intent(register.this,MainActivity.class);
+                startActivity(intent);
+            }
+        });
         //判断姓名是否输入符合规范
         editText1.addTextChangedListener(new TextWatcher() {
 
