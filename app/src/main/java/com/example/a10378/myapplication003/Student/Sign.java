@@ -63,7 +63,7 @@ public class Sign extends AppCompatActivity {
     private Uri imageuri;
     private byte[] arr = null;
     private Bitmap bitmap;
-    private Analysis_response analysis_response=null;
+    private Analysis_response analysis_response = null;
     private Response response = new Response();
     private Face_Ways face_ways = null;
     String faceToken = "";
@@ -166,52 +166,54 @@ public class Sign extends AppCompatActivity {
                                     face_ways = new Face_Ways();
                                     //调用人脸检测代码
                                     response = face_ways.Detect_face(arr);
-                                    if (response!=null){
+                                    if (response != null) {
                                         //faceToken = getFaceToken(response);
-                                        if (response.getStatus()==403)
-                                        {
-                                            runOnUiThread(new Runnable() {
-                                                @Override
-                                                public void run() {
+
+                                                if (response.getStatus() == 403) {
+                                                    runOnUiThread(new Runnable() {
+                                                        @Override
+                                                        public void run() {
                                                     //Log.e("222222222222222222222222", faceToken);
-                                                    Toast.makeText(Sign.this,"并发数限超过限制！请重新检测！" ,Toast.LENGTH_LONG).show();
+                                                    Toast.makeText(Sign.this, "并发数限超过限制！请重新检测！", Toast.LENGTH_LONG).show();
+                                                        }
+                                                    });
                                                 }
-                                            });
-                                        }
 
-                                        analysis_response=new Analysis_response(response);
+                                        analysis_response = new Analysis_response(response);
                                         Log.e("333333333333333333333333333333333333", analysis_response.getFaceToken());
-                                        //获取图片人脸坐标
-                                        int arr[]=analysis_response.face_rectangle();
-                                        Log.e("222222222222222222222222", String.valueOf(arr[2]));
-                                        Canvas canvas=new Canvas();
-                                        Paint p=new Paint();
-                                        p.setColor(Color.RED);
-                                        canvas.drawRect(arr[2],arr[1],arr[0],arr[3],p);
-                                        faceToken=analysis_response.getFaceToken();
-
-
+                                        //绘制图片
+                                        runOnUiThread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                int arr[] = analysis_response.face_rectangle();
+                                                Bitmap bitmap1 = bitmap.copy(Bitmap.Config.ARGB_8888, true);
+                                                Canvas canvas = new Canvas(bitmap1);
+                                                Paint p = new Paint();
+                                                p.setColor(Color.RED);
+                                                p.setStyle(Paint.Style.STROKE);//不填充
+                                                p.setStrokeWidth(6);
+                                                //画出矩形人脸
+                                                canvas.drawRect(arr[1], arr[0], arr[2] + arr[1], arr[3] + arr[0], p);
+                                                picture.setImageBitmap(bitmap1);
+                                            }
+                                        });
+                                        faceToken = analysis_response.getFaceToken();
                                         Toast.makeText(Sign.this, faceToken, Toast.LENGTH_LONG).show();
-                                    }
-                                  else {
+                                    } else {
                                         runOnUiThread(new Runnable() {
                                             @Override
                                             public void run() {
                                                 Log.e("222222222222222222222222", faceToken);
-                                                Toast.makeText(Sign.this,"图片格式不符合！" +
-                                                        "分辨率最小为48*48，最大为4096*4096，且不超过2M",Toast.LENGTH_LONG).show();
+                                                Toast.makeText(Sign.this, "图片格式不符合！" +
+                                                        "分辨率最小为48*48，最大为4096*4096，且不超过2M", Toast.LENGTH_LONG).show();
                                             }
                                         });
                                     }
-
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                 }
-
                             }
                         }).start();
-
-
                         break;
                     default:
                         break;
@@ -219,7 +221,6 @@ public class Sign extends AppCompatActivity {
             }
         });
         //确定
-
         Button bt1 = findViewById(R.id.sign_button);
         bt1.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -319,26 +320,5 @@ public class Sign extends AppCompatActivity {
         bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
         return baos.toByteArray();
     }
-   /* private byte[] getBytesFormfile(File file){
-        if (file==null){
-            return  null;
-        }
-        try {
-            FileInputStream stream=new FileInputStream(file);
-            ByteArrayOutputStream out=new ByteArrayOutputStream(1000);
-            byte []b=new byte[1000];
-            int n;
-            while ((n=stream.read(b))!=-1){
-                out.write(b,0,n);
-                stream.close();
-                out.close();
-                return out.toByteArray();
-            }
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return  null;
-    }*/
+
 }

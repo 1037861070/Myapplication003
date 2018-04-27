@@ -48,11 +48,11 @@ public class Analysis_response {
             }
             //分别获取图片人脸的宽度、纵坐标、横坐标、高度
             arr[0]=json.optJSONArray("faces").optJSONObject(0).//宽度
-                    optJSONObject("face_rectangle").optInt("width");
-            arr[1]=json.optJSONArray("faces").optJSONObject(0).//纵坐标
                     optJSONObject("face_rectangle").optInt("top");
-            arr[2]=json.optJSONArray("faces").optJSONObject(0).//横坐标
+            arr[1]=json.optJSONArray("faces").optJSONObject(0).//纵坐标
                     optJSONObject("face_rectangle").optInt("left");
+            arr[2]=json.optJSONArray("faces").optJSONObject(0).//横坐标
+                    optJSONObject("face_rectangle").optInt("width");
             arr[3]=json.optJSONArray("faces").optJSONObject(0).//高度
                     optJSONObject("face_rectangle").optInt("height");
             Log.e("arr[0]",String.valueOf(arr[0])) ;
