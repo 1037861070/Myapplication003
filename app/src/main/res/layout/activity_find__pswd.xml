@@ -101,6 +101,7 @@
         android:layout_marginTop="8dp"
         android:background="@drawable/button_style"
         android:text="检测人脸"
+        android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.485"

@@ -9,6 +9,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
@@ -75,8 +76,10 @@ private String location="";
                 if (cursor.moveToFirst()) {
                     do {
 
+
                          location=cursor.getString(cursor.getColumnIndex("location"));
                         editText.setText("当前位置:"+location);
+                        Log.e("结果：",location);
                         Toast.makeText(Leave.this,location, Toast.LENGTH_SHORT).show();
                     }while (cursor.moveToNext());
 

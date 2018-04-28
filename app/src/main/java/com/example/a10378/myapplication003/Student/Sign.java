@@ -2,6 +2,7 @@ package com.example.a10378.myapplication003.Student;
 //签到
 
 import android.Manifest;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -21,6 +22,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Base64;
@@ -66,13 +68,12 @@ public class Sign extends AppCompatActivity {
     private Analysis_response analysis_response = null;
     private Response response = new Response();
     private Face_Ways face_ways = null;
+    private Button check_facebtn=null;
     String faceToken = "";
-    String key = "mPE5MqlX2IE09V2sL1XqvU1C0WJpBrqb";//api_key
-    String secret = "-apimu0iqLh1x-BZzKM1rDbyUmCP2Wu-";//api_secret
-    String imageUrl = "http://pic1.hebei.com.cn/003/005/869/00300586905_449eedbb.jpg";
-    StringBuffer sb = new StringBuffer();
-    Thread thread;
 
+    private Response response1=null;
+    private int flag2=0;
+private  int flag=0;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -86,6 +87,7 @@ public class Sign extends AppCompatActivity {
         editText = findViewById(R.id.sign_location);
         picture = findViewById(R.id.picture);
         Button btn2 = findViewById(R.id.signback_button);
+        check_facebtn = findViewById(R.id.detect_face);
         //返回主界面
         btn2.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -103,6 +105,7 @@ public class Sign extends AppCompatActivity {
             public void onClick(View v) {
                 imageView1.setVisibility(View.GONE);
                 textView1.setVisibility(View.GONE);
+
                 editText.setVisibility(View.VISIBLE);
                 Intent intent = new Intent(Sign.this, Main2Activity.class);
                 intent.putExtra("user", user);
@@ -115,6 +118,7 @@ public class Sign extends AppCompatActivity {
         editText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                flag2=1;
                 SQLiteDatabase db = dbhelper.getWritableDatabase();
                 Cursor cursor = db.rawQuery("select* from leave where id_number =? ", new String[]{user.getId_number()});
                 if (cursor.moveToFirst()) {
@@ -134,6 +138,7 @@ public class Sign extends AppCompatActivity {
             public void onClick(View v) {
                 imageView2.setVisibility(View.GONE);
                 textView.setVisibility(View.GONE);
+                check_facebtn.setVisibility(View.VISIBLE);
                 //添加权限
                 if (ContextCompat.checkSelfPermission(Sign.this, Manifest.permission
                         .CAMERA) != PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(
@@ -147,7 +152,7 @@ public class Sign extends AppCompatActivity {
                 }
             }
         });
-        final Button check_facebtn = findViewById(R.id.detect_face);
+
 
 
         check_facebtn.setOnClickListener(new View.OnClickListener() {
@@ -168,23 +173,30 @@ public class Sign extends AppCompatActivity {
                                     response = face_ways.Detect_face(arr);
                                     if (response != null) {
                                         //faceToken = getFaceToken(response);
-
                                                 if (response.getStatus() == 403) {
-                                                    runOnUiThread(new Runnable() {
+                                                    AlertDialog.Builder dialog = new AlertDialog.Builder(Sign.this);
+                                                    dialog.setTitle("提示");
+                                                    dialog.setMessage("并发数限制，请重新注册！");
+                                                    dialog.setCancelable(false);
+                                                    dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                                                         @Override
-                                                        public void run() {
-                                                    //Log.e("222222222222222222222222", faceToken);
-                                                    Toast.makeText(Sign.this, "并发数限超过限制！请重新检测！", Toast.LENGTH_LONG).show();
+                                                        public void onClick(DialogInterface dialogInterface, int i) {
+                                                            Intent intent = new Intent(Sign.this, Sign.class);
+                                                            startActivity(intent);
                                                         }
                                                     });
+                                                    dialog.show();
                                                 }
+                                                flag=2;
 
                                         analysis_response = new Analysis_response(response);
+                                        faceToken = analysis_response.getFaceToken();
                                         Log.e("333333333333333333333333333333333333", analysis_response.getFaceToken());
                                         //绘制图片
                                         runOnUiThread(new Runnable() {
                                             @Override
                                             public void run() {
+                                                flag=3;
                                                 int arr[] = analysis_response.face_rectangle();
                                                 Bitmap bitmap1 = bitmap.copy(Bitmap.Config.ARGB_8888, true);
                                                 Canvas canvas = new Canvas(bitmap1);
@@ -197,8 +209,7 @@ public class Sign extends AppCompatActivity {
                                                 picture.setImageBitmap(bitmap1);
                                             }
                                         });
-                                        faceToken = analysis_response.getFaceToken();
-                                        Toast.makeText(Sign.this, faceToken, Toast.LENGTH_LONG).show();
+
                                     } else {
                                         runOnUiThread(new Runnable() {
                                             @Override
@@ -220,30 +231,78 @@ public class Sign extends AppCompatActivity {
                 }
             }
         });
-        //确定
+        //确定签到
         Button bt1 = findViewById(R.id.sign_button);
         bt1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(Sign.this, Student_Main.class);
-                intent.putExtra("user", user);
-                startActivity(intent);
+                switch (view.getId()){
+                    case R.id.sign_button:
+                        AlertDialog.Builder dialog = new AlertDialog.Builder(Sign.this);
+                        dialog.setTitle("提示");
+                        if (flag2==1){
+                            if (flag==3){
+                                //进行人脸搜索，开启线程
+                                new Thread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        AlertDialog.Builder dialog = new AlertDialog.Builder(Sign.this);
+                                        dialog.setTitle("提示");
+                                        response1=face_ways.SearchFacetorken(faceToken);
+                                        String result = new String(response1.getContent());
+                                        //得到人脸集合中的最符合一个的置信度
+                                        float confidence=analysis_response.getConfidence();
+                                        Log.e("999999999999999999",String.valueOf(confidence));
+                                        Log.e("result",result);
+
+                                        dialog.setMessage("签到成功！");
+                                        dialog.setCancelable(false);
+                                        dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialogInterface, int i) {
+                                                Intent intent = new Intent(Sign.this, Sign.class);
+                                                startActivity(intent);
+                                            }
+                                        });
+                                        dialog.show();
+
+                                    }
+                                }).start();
+
+                            }
+                          else {
+                                dialog.setMessage("操作有误！");
+                                if (flag==1||flag==2){
+                                    dialog.setMessage("请检测人脸！");
+                                }
+                                dialog.setCancelable(false);
+                                dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                        Intent intent = new Intent(Sign.this, Sign.class);
+                                        startActivity(intent);
+                                    }
+                                });
+                                dialog.show();
+                            }
+
+                        }
+                        else {
+                            dialog.setMessage("请获取位置信息！");
+                            dialog.setCancelable(false);
+                            dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    Intent intent = new Intent(Sign.this, Sign.class);
+                                    startActivity(intent);
+                                }
+                            });
+                            dialog.show();
+                        }
+                }
+
             }
         });
-    }
-
-    //解析response对象，得到其中的face_token值
-    private String getFaceToken(Response response) throws JSONException {
-        if (response.getStatus() != 200) {
-            return new String(response.getContent());
-        }
-        //将response转换为字符串
-        String res = new String(response.getContent());
-        Log.e("response", res);
-        //解析json对象，取出json中faces数组中第一个位置名为face_token字段的值
-        JSONObject json = new JSONObject(res);
-        String faceToken = json.optJSONArray("faces").optJSONObject(0).optString("face_token");
-        return faceToken;
     }
 
     //拍照，并存放在临时路径
@@ -303,6 +362,7 @@ public class Sign extends AppCompatActivity {
                     bitmap = BitmapFactory.decodeStream(getContentResolver()
                             .openInputStream(imageuri));
                     Log.e("uri1111111111", imageuri.toString());
+                    flag=1;
                     picture.setImageBitmap(bitmap);
                 } catch (FileNotFoundException e) {
                     e.printStackTrace();
@@ -313,12 +373,5 @@ public class Sign extends AppCompatActivity {
         }
     }
 
-    //将本地res下的图片处理成byte数组形式
-    private byte[] getBitmap(int res) {
-        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), res);
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
-        return baos.toByteArray();
-    }
 
 }

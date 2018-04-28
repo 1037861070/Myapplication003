@@ -66,12 +66,12 @@ public class Face_Ways extends AppCompatActivity {
     }
 
     //创建人脸库
-    public Response CreatFaceset(ArrayList faces) {
-        String faceTokens = creatFaceTokens(faces);
+    public Response CreatFaceset( String faces) {
+       // String faceTokens = creatFaceTokens(faces);
         //ForceMerge中0为在faceset集合中不加入重复的facetoken,1为可以将图片加入相同的faceset集合中
         try {
-            response = FaceSet.createFaceSet(null, "test",
-                    null, faceTokens, null, 0);
+            response = FaceSet.createFaceSet(null, "student_faces",
+                    null, faces, null, 1);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -100,7 +100,7 @@ public class Face_Ways extends AppCompatActivity {
         //将图片加入指定的faceset集合
         Response response = null;
         try {
-            response = FaceSet.addFaceByOuterId(faceToken2, "test");
+            response = FaceSet.addFaceByOuterId(faceToken2, "student_faces");
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -110,8 +110,9 @@ public class Face_Ways extends AppCompatActivity {
 
     public Response SearchFacetorken(String faceToken2) {
         try {
-            response = commonOperate.searchByOuterId(faceToken2, imageUrl,
-                    null, "test", 1);
+
+            response = commonOperate.searchByOuterId(faceToken2, null,
+                    null, "student_faces", 1);
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -20,6 +20,7 @@ public class MyDatabaseHelper extends SQLiteOpenHelper{
             "\t`name`\tTEXT,\n" +
             "\t`id_number`\tTEXT,\n" +
             "\t`password`\tTEXT,\n" +
+            "\t`face_token`\tTEXT,\n" +
             "\t`class`\tTEXT,\n" +
             "\t`type`\tINTEGER,\n" +
             "\t`sign_number`\tINTEGER\n" +
@@ -36,7 +37,7 @@ public class MyDatabaseHelper extends SQLiteOpenHelper{
             "\t`leave_id`\tINTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,\n" +
             "\t`id_number`\tTEXT,\n" +
             "\t`name`\tTEXT,\n" +
-            "\t` `\tTEXT,\n" +
+            "\t`location`\tTEXT,\n" +
             "\t`start_time`\tTEXT,\n" +
             "\t`end_time`\tTEXT,\n" +
             "\t`cause`\tTEXT\n" +

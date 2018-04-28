@@ -1,6 +1,7 @@
 package com.example.a10378.myapplication003.Student;
 //找回密码中间界面
 import android.Manifest;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -15,6 +16,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -26,6 +28,7 @@ import android.widget.Toast;
 
 import com.example.a10378.myapplication003.Face_Operate.Analysis_response;
 import com.example.a10378.myapplication003.Face_Operate.Face_Ways;
+import com.example.a10378.myapplication003.MainActivity;
 import com.example.a10378.myapplication003.R;
 import com.megvii.cloud.http.Response;
 
@@ -45,6 +48,7 @@ private Analysis_response analysis_response=null;
 private Response response=new Response();
 private byte[] arr = null;
 private String face_token=null;
+private int flag=-1;
 @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,8 +56,9 @@ private String face_token=null;
         //实时获取相机拍照
         imageView1=findViewById(R.id.leave_link);
         imageView2=findViewById(R.id.picure_find_pswd);
+
         textView=findViewById(R.id.textView4);
-        Button btn3=findViewById(R.id.check_face);
+        final Button btn3=findViewById(R.id.check_face);
         //检测人脸
         btn3.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -75,34 +80,45 @@ private String face_token=null;
 
                                         if (response.getStatus()==403)
                                         {
+                                            AlertDialog.Builder dialog = new AlertDialog.Builder(Find_Pswd.this);
+                                            dialog.setTitle("提示");
+                                            dialog.setMessage("并发数限制，请重新注册！");
+                                            dialog.setCancelable(false);
+                                            dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                                @Override
+                                                public void onClick(DialogInterface dialogInterface, int i) {
+                                                    Intent intent = new Intent(Find_Pswd.this, Find_Pswd.class);
+                                                    startActivity(intent);
+                                                }
+                                            });
+                                            dialog.show();
+
+                                        }
+                                        else {
+                                            flag=2;//有人脸数据
+                                            analysis_response=new Analysis_response(response);
+                                            Log.e("333333333333333333333333333333333333", analysis_response.getFaceToken());
+                                            //绘制图片
                                             runOnUiThread(new Runnable() {
                                                 @Override
                                                 public void run() {
-                                                    Log.e("222222222222222222222222", face_token);
-                                                    Toast.makeText(Find_Pswd.this,"并发数限超过限制！请重新检测！" ,Toast.LENGTH_LONG).show();
+                                                    flag=3;//有人脸
+                                                    int arr[]=analysis_response.face_rectangle();
+                                                    Bitmap bitmap1=bitmap.copy(Bitmap.Config.ARGB_8888,true);
+                                                    Canvas canvas=new Canvas(bitmap1);
+                                                    Paint p=new Paint();
+                                                    p.setColor(Color.RED);
+                                                    p.setStyle(Paint.Style.STROKE);//不填充
+                                                    p.setStrokeWidth(6);
+                                                    Log.e("4444444444444444444444444444444", String.valueOf(arr[0]));
+                                                    //画出矩形人脸
+                                                    canvas.drawRect(arr[1],arr[0],arr[2]+arr[1],arr[3]+arr[0],p);
+                                                    imageView2.setImageBitmap(bitmap1);
                                                 }
                                             });
                                         }
 
-                                        analysis_response=new Analysis_response(response);
-                                        Log.e("333333333333333333333333333333333333", analysis_response.getFaceToken());
-                                        //绘制图片
-                                        runOnUiThread(new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                int arr[]=analysis_response.face_rectangle();
-                                                Bitmap bitmap1=bitmap.copy(Bitmap.Config.ARGB_8888,true);
-                                                Canvas canvas=new Canvas(bitmap1);
-                                                Paint p=new Paint();
-                                                p.setColor(Color.RED);
-                                                p.setStyle(Paint.Style.STROKE);//不填充
-                                                p.setStrokeWidth(6);
-                                                Log.e("4444444444444444444444444444444", String.valueOf(arr[0]));
-                                                //画出矩形人脸
-                                                canvas.drawRect(arr[1],arr[0],arr[2]+arr[1],arr[3]+arr[0],p);
-                                                imageView2.setImageBitmap(bitmap1);
-                                            }
-                                        });
+
                                     }
                                     else {
                                         runOnUiThread(new Runnable() {
@@ -125,11 +141,14 @@ private String face_token=null;
                 }
             }
         });
+        //点击拍照+号
         imageView1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                flag=1;//有拍照
                 imageView1.setVisibility(View.GONE);
                 textView.setVisibility(View.GONE);
+                btn3.setVisibility(View.VISIBLE);
                 //添加权限
                 if (ContextCompat.checkSelfPermission(Find_Pswd.this, Manifest.permission
                         .CAMERA) != PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(
@@ -144,13 +163,62 @@ private String face_token=null;
             }
         });
 
-        TextView textView1=findViewById(R.id.findpasd_button);
-        TextView textView2=findViewById(R.id.findpasdback_button);
+        Button textView1=findViewById(R.id.findpasd_button);
+        Button textView2=findViewById(R.id.findpasdback_button);
+        //返回
+        textView2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Find_Pswd.this, Find_Pswd.class);
+                startActivity(intent);
+            }
+        });
         textView1.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view) {
-                Intent intent=new Intent(Find_Pswd.this,Modify_Pswd.class);
-                startActivity(intent);
+                AlertDialog.Builder dialog=new AlertDialog.Builder(Find_Pswd.this);
+                dialog.setTitle("提示");
+                if (flag==3){
+                    dialog.setMessage("检测人脸成功！");
+                    //接下来进行人脸搜索
+                    dialog.setCancelable(false);
+                    dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                           // int a=getIntent().getIntExtra("flag",0);
+                                Intent intent = new Intent(Find_Pswd.this, Modify_Pswd.class);
+                                startActivity(intent);
+                        }
+                    });
+                    dialog.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            Intent intent = new Intent(Find_Pswd.this, Find_Pswd.class);
+                            startActivity(intent);
+                        }
+                    });
+                    dialog.show();
+                }
+                else {
+                    dialog.setMessage("条件不符合！");
+                    if (flag==1){
+                        dialog.setMessage("无图片！");
+                    }
+                    else if (flag==2)
+                    {
+                        dialog.setMessage("请检测人脸！");
+                    }
+
+                    dialog.setCancelable(false);
+                    dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            Intent intent = new Intent(Find_Pswd.this, Find_Pswd.class);
+                            startActivity(intent);
+                        }
+                    });
+                    dialog.show();
+                }
             }
         });
     }
@@ -218,4 +286,5 @@ private String face_token=null;
                 break;
         }
     }
+
 }

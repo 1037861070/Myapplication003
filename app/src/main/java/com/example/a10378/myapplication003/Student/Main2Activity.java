@@ -75,7 +75,7 @@ private int flag=0;
         user=(use_info) getIntent().getSerializableExtra("user");
         dbhelper=new MyDatabaseHelper(this,"dbst.db",null,2);
         locationClient=new LocationClient(getApplicationContext());
-
+        Log.e("user information",user.getId_number());
         locationClient.registerLocationListener(myListener);//注册监听函数
         SDKInitializer.initialize(getApplicationContext());
         setContentView(R.layout.activity_main2);
@@ -124,6 +124,7 @@ private int flag=0;
                     ContentValues values=new ContentValues();
                     values.put("location",s1);
                     values.put("id_number",user.getId_number());
+                    Log.e("id_numner",user.getClassname());
                     dbhelper.insert(db,"leave",values);
                     values.clear();
                     db.close();
@@ -143,7 +144,6 @@ private int flag=0;
         //显示百度地图位置
         if (isFirstlocate){
             bdLocation=location;
-
             //SQLiteDatabase db=dbhelper.getWritableDatabase();//得到数据库对象，已有则不创建
 
             LatLng ll=new LatLng(location.getLatitude(),location.getLongitude());
@@ -204,12 +204,16 @@ private int flag=0;
     //获取当前位置
 public class MyLocationListener extends BDAbstractLocationListener{
     @Override
-    public void onReceiveLocation(final BDLocation bdLocation) {
-        if (bdLocation.getLocType() == BDLocation.TypeNetWorkLocation ||
-                bdLocation.getLocType() == BDLocation.TypeGpsLocation) {
-            navigateTo(bdLocation);
 
-        }
+    public void onReceiveLocation(final BDLocation bdLocation) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                if (bdLocation.getLocType() == BDLocation.TypeNetWorkLocation ||
+                        bdLocation.getLocType() == BDLocation.TypeGpsLocation) {
+                    navigateTo(bdLocation);
+
+                }
                 StringBuilder currenPosition = new StringBuilder();
                 currenPosition.append("维度：").append(bdLocation.getLatitude()).append("\n");
                 currenPosition.append("经度：").append(bdLocation.getLongitude()).append("\n");
@@ -228,8 +232,11 @@ public class MyLocationListener extends BDAbstractLocationListener{
                 Toast.makeText(Main2Activity.this,currenPosition.toString() , Toast.LENGTH_LONG).show();
                 Log.d("描述：", String.valueOf(bdLocation.getLocType()) + "  "
                         + currenPosition.toString());
+            }
+        }).start();
+
     }
-    public void onConnectHotSpotMessage(String s,int i){}
+
 
 }
 

@@ -55,10 +55,30 @@ public class Analysis_response {
                     optJSONObject("face_rectangle").optInt("width");
             arr[3]=json.optJSONArray("faces").optJSONObject(0).//高度
                     optJSONObject("face_rectangle").optInt("height");
-            Log.e("arr[0]",String.valueOf(arr[0])) ;
             return arr;
         }
         else
             return null;
+    }
+    public float getConfidence(){
+        float confidence=0;
+        if (response.getStatus()== 200) {
+            String res = new String(response.getContent());
+            JSONObject json = null;
+            try {
+                json=new JSONObject(res);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+
+                confidence=Float.parseFloat(json.optJSONArray("results").optJSONObject(0).optString("confidence"));
+                Log.e("confidence",String.valueOf(confidence));
+
+
+            return confidence;
+        }
+        else
+            return confidence;
     }
 }
