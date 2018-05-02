@@ -72,4 +72,12 @@ public class leave_info implements Serializable {
     public void setCause(String cause) {
         this.cause = cause;
     }
+//重写toString方法
+    @Override
+    public String toString() {
+        return "学号:"+getId_number()+"   姓名:"+getName()+"\n"+
+                "地点:"+getLocation()+"\n"+
+                "开始:"+getStart_time()+"                  结束:"+getEnd_time()+"\n"+
+                "原因:"+getCause();
+    }
 }

@@ -250,6 +250,8 @@ private  int flag=0;
                                         dialog.setTitle("提示");
                                         response1=face_ways.SearchFacetorken(faceToken);
                                         String result = new String(response1.getContent());
+
+
                                         //得到人脸集合中的最符合一个的置信度
                                         float confidence=analysis_response.getConfidence();
                                         Log.e("999999999999999999",String.valueOf(confidence));
