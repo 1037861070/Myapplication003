@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -19,7 +20,10 @@ import com.example.a10378.myapplication003.Info_DB.use_info;
 
 public class Student_Main extends AppCompatActivity {
     private MyDatabaseHelper dbhelper;
-
+    private ImageView student2=null;
+    private ImageView student3=null;
+    private ImageView student4=null;
+    private ImageView student5=null;
     private use_info user;
     private Intent intent1;
 
@@ -27,6 +31,10 @@ public class Student_Main extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_student__main);
+        student2=findViewById(R.id.student_2);
+        student3=findViewById(R.id.student_3);
+        student4=findViewById(R.id.student_4);
+        student5=findViewById(R.id.student_5);
         //得到传递过来的对象参数，方便下一步操作
         dbhelper = new MyDatabaseHelper(this, "dbst.db", null, 2); //数据库建立并升级
         dbhelper.getWritableDatabase();   //创建数据库
@@ -54,6 +62,15 @@ public class Student_Main extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+        student2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Intent intent = new Intent(Student_Main.this, Leave.class);
+                intent.putExtra("user", user);
+                startActivity(intent);
+            }
+        });
         //修改个人信息操作
         TextView textView2 = findViewById(R.id.info_management);
         textView2.setOnClickListener(new View.OnClickListener() {
@@ -71,6 +88,14 @@ public class Student_Main extends AppCompatActivity {
 
             }
         });
+        student4.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Student_Main.this, Modify_info.class);
+                intent.putExtra("user", user);
+                startActivity(intent);
+            }
+        });
         //退出
         TextView textView4 = findViewById(R.id.exit);
         textView4.setOnClickListener(new View.OnClickListener() {
@@ -80,7 +105,23 @@ public class Student_Main extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+        student5.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Student_Main.this, MainActivity.class);
+                startActivity(intent);
+            }
+        });
         //跳转签到界面
+        student3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Student_Main.this, Sign.class);
+                Toast.makeText(Student_Main.this, user.getId_number() + user.getPassword(), Toast.LENGTH_SHORT).show();
+                intent.putExtra("user", user);
+                startActivity(intent);
+            }
+        });
         TextView t2 = findViewById(R.id.sign_record);
         t2.setOnClickListener(new View.OnClickListener() {
             @Override

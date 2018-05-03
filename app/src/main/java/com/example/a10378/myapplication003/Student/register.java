@@ -131,7 +131,7 @@ public class register extends AppCompatActivity {
                                                 public void run() {
                                                     AlertDialog.Builder dialog = new AlertDialog.Builder(register.this);
                                                     dialog.setTitle("提示");
-                                                    dialog.setMessage("并发数限制，请重新注检测！");
+                                                    dialog.setMessage("并发数限制，请重新检测！");
                                                     dialog.setCancelable(false);
                                                     dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                                                         @Override

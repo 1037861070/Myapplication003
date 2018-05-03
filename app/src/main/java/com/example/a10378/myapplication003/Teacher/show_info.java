@@ -26,8 +26,6 @@ public class show_info extends AppCompatActivity {
 
     private int flag;
     ListView listView=null;
-    private  String[] data={"Apple","banana","orange","Watermelon","pear","Grape","Cherry","mango"
-    ,"Strawbery","Watermelo","Cherry"};
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,7 +34,7 @@ public class show_info extends AppCompatActivity {
         dbhelper.getWritableDatabase();   //创建数据库
         flag=getIntent().getIntExtra("flag",flag);
          listView=findViewById(R.id.listview);
-        Toast.makeText(this,String.valueOf(flag),Toast.LENGTH_SHORT).show();
+        //Toast.makeText(this,String.valueOf(flag),Toast.LENGTH_SHORT).show();
         //user=(use_info) getIntent().getSerializableExtra("user");
         show_info(flag,dbhelper);
 
