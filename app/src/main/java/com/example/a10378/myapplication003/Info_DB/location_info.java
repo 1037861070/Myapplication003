@@ -7,6 +7,8 @@ import java.io.Serializable;
  */
 
 public class location_info implements Serializable {
+    private String id_number;//学号
+    private int location_type;//类型
     private double Latitude;//维度
     private double Longitude;//经度
     private String Country;//国家
@@ -14,6 +16,22 @@ public class location_info implements Serializable {
     private String Street;//街道
     private String StreetNumber;//街道号
     private int Loctype;//网络类型
+
+    public String getId_number() {
+        return id_number;
+    }
+
+    public void setId_number(String id_number) {
+        this.id_number = id_number;
+    }
+
+    public int getLocation_type() {
+        return location_type;
+    }
+
+    public void setLocation_type(int location_type) {
+        this.location_type = location_type;
+    }
 
     public double getLatitude() {
         return Latitude;

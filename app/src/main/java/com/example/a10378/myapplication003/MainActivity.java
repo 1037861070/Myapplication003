@@ -1,5 +1,6 @@
 package com.example.a10378.myapplication003;
 
+import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
@@ -25,6 +26,8 @@ import com.example.a10378.myapplication003.Student.Student_Main;
 import com.example.a10378.myapplication003.Student.register;
 import com.example.a10378.myapplication003.Teacher.Teacher_Main;
 
+import java.text.SimpleDateFormat;
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -45,6 +48,20 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         dbhelper = new MyDatabaseHelper(this, "dbst.db", null, 2); //数据库建立并升级
         dbhelper.getWritableDatabase();   //创建数据库
+
+        SQLiteDatabase db=dbhelper.getWritableDatabase();
+        Cursor cursor = db.rawQuery("select* from user where id_number =? and type=?"
+                , new String[]{"0121410880000", "1"});
+        if (!cursor.moveToFirst()) {
+                ContentValues values = new ContentValues();
+                values.put("name", "admin");
+                values.put("type",1);//1为已签到，正常
+                values.put("password","likui1314");
+                values.put("id_number", "0121410880000");
+                dbhelper.insert(db, "user", values);
+                values.clear();
+            }
+            cursor.close();
 
         Button bt1 = findViewById(R.id.signin_button);
         editText1 = findViewById(R.id.username_edit);
@@ -173,7 +190,7 @@ public class MainActivity extends AppCompatActivity {
                                 } else {
                                     Toast.makeText(MainActivity.this, "登陆成功！", Toast.LENGTH_SHORT).show();
                                     Intent intent = new Intent(MainActivity.this, Teacher_Main.class);
-                                    intent.putExtra("user", user);
+                                    //intent.putExtra("user", user);
                                     startActivity(intent);
                                 }
                             }

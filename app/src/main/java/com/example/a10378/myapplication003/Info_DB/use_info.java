@@ -13,6 +13,7 @@ public class use_info implements Serializable{
     private String password;
     private int type;
     private int sign_number;
+    private String face_token;
 
     public use_info(String name, String classname, String id_number, String password, int type, int sign_number) {
         this.name = name;
@@ -21,6 +22,14 @@ public class use_info implements Serializable{
         this.password = password;
         this.type = type;
         this.sign_number = sign_number;
+    }
+
+    public String getFace_token() {
+        return face_token;
+    }
+
+    public void setFace_token(String face_token) {
+        this.face_token = face_token;
     }
 
     public String getPassword() {
@@ -71,5 +80,13 @@ public class use_info implements Serializable{
 
     public void setSign_number(int sign_number) {
         this.sign_number = sign_number;
+    }
+
+    @Override
+    public String toString() {
+        return "学号:"+getId_number()+"   姓名:"+getName()+"\n"+
+                "班级:"+getClassname()+"\n"+
+                "人脸标志:"+getFace_token()+"\n"+
+                "签到次数:"+String.valueOf(getSign_number());
     }
 }

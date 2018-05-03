@@ -105,18 +105,44 @@ public class register extends AppCompatActivity {
                                     face_ways = new Face_Ways();
                                     //调用人脸检测代码
                                     response = face_ways.Detect_face(arr);
-                                    if (response != null) {
+                                    if (response == null) {
+                                        runOnUiThread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                AlertDialog.Builder dialog = new AlertDialog.Builder(register.this);
+                                                dialog.setTitle("图片格式不符合");
+                                                dialog.setMessage("分辨率最小为48*48，最大为4096*4096，且不超过2M");
+                                                dialog.setCancelable(false);
+                                                dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                                    @Override
+                                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                                        Intent intent = new Intent(register.this, register.class);
+                                                        startActivity(intent);
+                                                    }
+                                                });
+                                                dialog.show();
+                                    }
+                                });
+                                    }
 
-
-                                        if (response.getStatus() == 403) {
+                                        else if (response.getStatus() != 200 ) {
                                             runOnUiThread(new Runnable() {
                                                 @Override
                                                 public void run() {
-                                                    Log.e("222222222222222222222222", face_token);
-                                                    Toast.makeText(register.this, "并发数限超过限制！请重新检测！", Toast.LENGTH_LONG).show();
+                                                    AlertDialog.Builder dialog = new AlertDialog.Builder(register.this);
+                                                    dialog.setTitle("提示");
+                                                    dialog.setMessage("并发数限制，请重新注检测！");
+                                                    dialog.setCancelable(false);
+                                                    dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                                        @Override
+                                                        public void onClick(DialogInterface dialogInterface, int i) {
+
+                                                        }
+                                                    });
+                                                    dialog.show();
                                                 }
                                             });
-                                        } else {
+                                        }  else {
 
                                             flag = 2;//有人脸数据
                                             analysis_response = new Analysis_response(response);
@@ -141,16 +167,8 @@ public class register extends AppCompatActivity {
                                                 }
                                             });
                                         }
-                                    } else {
-                                        runOnUiThread(new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                Log.e("222222222222222222222222", face_token);
-                                                Toast.makeText(register.this, "图片格式不符合！" +
-                                                        "分辨率最小为48*48，最大为4096*4096，且不超过2M", Toast.LENGTH_LONG).show();
-                                            }
-                                        });
-                                    }
+
+
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                 }
@@ -381,8 +399,7 @@ public class register extends AppCompatActivity {
                                                     dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                                                         @Override
                                                         public void onClick(DialogInterface dialogInterface, int i) {
-                                                            Intent intent = new Intent(register.this, register.class);
-                                                            startActivity(intent);
+
                                                         }
                                                     });
                                                     dialog.show();

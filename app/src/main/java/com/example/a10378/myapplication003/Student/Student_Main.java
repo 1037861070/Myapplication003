@@ -40,6 +40,7 @@ public class Student_Main extends AppCompatActivity {
             user.setName(cursor.getString(cursor.getColumnIndex("name")));
             user.setClassname(cursor.getString(cursor.getColumnIndex("class")));
             user.setSign_number(cursor.getInt(cursor.getColumnIndex("sign_number")));
+            Log.e("signnumber",String.valueOf(user.getSign_number()));
         }
         cursor.close();
         TextView textView1 = findViewById(R.id.Leave_record);

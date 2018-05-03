@@ -49,6 +49,7 @@ private BDLocation bdLocation;
 private MyDatabaseHelper dbhelper;
 private use_info user;
 private int flag=0;
+private int type=-1;
     public BDAbstractLocationListener myListener = new MyLocationListener();
     @Override
     protected void onResume() {
@@ -73,6 +74,7 @@ private int flag=0;
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         user=(use_info) getIntent().getSerializableExtra("user");
+        type=getIntent().getIntExtra("type",0);
         dbhelper=new MyDatabaseHelper(this,"dbst.db",null,2);
         locationClient=new LocationClient(getApplicationContext());
         Log.e("user information",user.getId_number());
@@ -122,10 +124,16 @@ private int flag=0;
                     currenPosition.append(bdLocation.getStreet());
                     String s1=currenPosition.toString();
                     ContentValues values=new ContentValues();
-                    values.put("location",s1);
                     values.put("id_number",user.getId_number());
+                    values.put("location_type",type);
+                    values.put("Latitude",bdLocation.getLatitude());
+                    values.put("Longitude",bdLocation.getLongitude());
+                    values.put("Province",bdLocation.getProvince());
+                    values.put("City",bdLocation.getCity());
+                    values.put("District",bdLocation.getDistrict());
+                    values.put("Street",bdLocation.getStreet());
                     Log.e("id_numner",user.getClassname());
-                    dbhelper.insert(db,"leave",values);
+                    dbhelper.insert(db,"location",values);
                     values.clear();
                     db.close();
                     Toast.makeText(Main2Activity.this,s1,

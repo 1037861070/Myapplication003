@@ -77,7 +77,7 @@ public class leave_info implements Serializable {
     public String toString() {
         return "学号:"+getId_number()+"   姓名:"+getName()+"\n"+
                 "地点:"+getLocation()+"\n"+
-                "开始:"+getStart_time()+"                  结束:"+getEnd_time()+"\n"+
+                "开始:"+getStart_time()+"                 结束:"+getEnd_time()+"\n"+
                 "原因:"+getCause();
     }
 }

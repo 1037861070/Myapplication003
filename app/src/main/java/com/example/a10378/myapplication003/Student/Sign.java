@@ -2,6 +2,7 @@ package com.example.a10378.myapplication003.Student;
 //签到
 
 import android.Manifest;
+import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -52,6 +53,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Locale;
 
 public class Sign extends AppCompatActivity {
     private use_info user;
@@ -70,9 +73,10 @@ public class Sign extends AppCompatActivity {
     private Face_Ways face_ways = null;
     private Button check_facebtn=null;
     String faceToken = "";
-
+    private int type=-1;
     private Response response1=null;
     private int flag2=0;
+    private String  faceToken1="";
 private  int flag=0;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -105,9 +109,10 @@ private  int flag=0;
             public void onClick(View v) {
                 imageView1.setVisibility(View.GONE);
                 textView1.setVisibility(View.GONE);
-
+                type=1;
                 editText.setVisibility(View.VISIBLE);
                 Intent intent = new Intent(Sign.this, Main2Activity.class);
+                intent.putExtra("type",type);
                 intent.putExtra("user", user);
                 startActivity(intent);
             }
@@ -120,10 +125,14 @@ private  int flag=0;
             public void onClick(View v) {
                 flag2=1;
                 SQLiteDatabase db = dbhelper.getWritableDatabase();
-                Cursor cursor = db.rawQuery("select* from leave where id_number =? ", new String[]{user.getId_number()});
+                Cursor cursor = db.rawQuery("select * from location where id_number =? and location_type=?",
+                        new String[]{user.getId_number(),"1"});
                 if (cursor.moveToFirst()) {
                     do {
-                        location = cursor.getString(cursor.getColumnIndex("location"));
+                        location = cursor.getString(cursor.getColumnIndex("Province"))+
+                                cursor.getString(cursor.getColumnIndex("City"))+
+                                cursor.getString(cursor.getColumnIndex("District"))+
+                                cursor.getString(cursor.getColumnIndex("Street"));
                         editText.setText("当前位置:" + location);
                         Toast.makeText(Sign.this, location, Toast.LENGTH_SHORT).show();
                     } while (cursor.moveToNext());
@@ -171,55 +180,67 @@ private  int flag=0;
                                     face_ways = new Face_Ways();
                                     //调用人脸检测代码
                                     response = face_ways.Detect_face(arr);
-                                    if (response != null) {
-                                        //faceToken = getFaceToken(response);
-                                                if (response.getStatus() == 403) {
-                                                    AlertDialog.Builder dialog = new AlertDialog.Builder(Sign.this);
-                                                    dialog.setTitle("提示");
-                                                    dialog.setMessage("并发数限制，请重新注册！");
-                                                    dialog.setCancelable(false);
-                                                    dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                                                        @Override
-                                                        public void onClick(DialogInterface dialogInterface, int i) {
-                                                            Intent intent = new Intent(Sign.this, Sign.class);
-                                                            startActivity(intent);
-                                                        }
-                                                    });
-                                                    dialog.show();
+
+                                            if (response==null){
+                                                runOnUiThread(new Runnable() {
+                                                    @Override
+                                                    public void run() {
+                                                        AlertDialog.Builder dialog = new AlertDialog.Builder(Sign.this);
+                                                        dialog.setTitle("图片格式不符合");
+                                                        dialog.setMessage("分辨率最小为48*48，最大为4096*4096，且不超过2M");
+                                                        dialog.setCancelable(false);
+                                                        dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                                            @Override
+                                                            public void onClick(DialogInterface dialogInterface, int i) {
+                                                                Intent intent = new Intent(Sign.this, Sign.class);
+                                                                startActivity(intent);
+                                                            }
+                                                        });
+                                                        dialog.show();
+                                                    }
+                                                });
+                                            }
+                                         else if (response.getStatus()!=200){
+                                                runOnUiThread(new Runnable() {
+                                                    @Override
+                                                    public void run() {
+                                                        AlertDialog.Builder dialog = new AlertDialog.Builder(Sign.this);
+                                                        dialog.setTitle("提示");
+                                                        dialog.setMessage("并发数限制，请重新检测！");
+                                                        dialog.setCancelable(false);
+                                                        dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                                            @Override
+                                                            public void onClick(DialogInterface dialogInterface, int i) {
+
+                                                            }
+                                                        });
+                                                        dialog.show();
+                                                    }
+                                                });
+                                            }
+                                        else {
+                                            flag=2;
+                                            analysis_response = new Analysis_response(response);
+                                            faceToken = analysis_response.getFaceToken();
+                                            Log.e("333333333333333333333333333333333333", analysis_response.getFaceToken());
+                                            //绘制图片
+                                            runOnUiThread(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    flag=3;
+                                                    int arr[] = analysis_response.face_rectangle();
+                                                    Bitmap bitmap1 = bitmap.copy(Bitmap.Config.ARGB_8888, true);
+                                                    Canvas canvas = new Canvas(bitmap1);
+                                                    Paint p = new Paint();
+                                                    p.setColor(Color.RED);
+                                                    p.setStyle(Paint.Style.STROKE);//不填充
+                                                    p.setStrokeWidth(6);
+                                                    //画出矩形人脸
+                                                    canvas.drawRect(arr[1], arr[0], arr[2] + arr[1], arr[3] + arr[0], p);
+                                                    picture.setImageBitmap(bitmap1);
                                                 }
-                                                flag=2;
-
-                                        analysis_response = new Analysis_response(response);
-                                        faceToken = analysis_response.getFaceToken();
-                                        Log.e("333333333333333333333333333333333333", analysis_response.getFaceToken());
-                                        //绘制图片
-                                        runOnUiThread(new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                flag=3;
-                                                int arr[] = analysis_response.face_rectangle();
-                                                Bitmap bitmap1 = bitmap.copy(Bitmap.Config.ARGB_8888, true);
-                                                Canvas canvas = new Canvas(bitmap1);
-                                                Paint p = new Paint();
-                                                p.setColor(Color.RED);
-                                                p.setStyle(Paint.Style.STROKE);//不填充
-                                                p.setStrokeWidth(6);
-                                                //画出矩形人脸
-                                                canvas.drawRect(arr[1], arr[0], arr[2] + arr[1], arr[3] + arr[0], p);
-                                                picture.setImageBitmap(bitmap1);
-                                            }
-                                        });
-
-                                    } else {
-                                        runOnUiThread(new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                Log.e("222222222222222222222222", faceToken);
-                                                Toast.makeText(Sign.this, "图片格式不符合！" +
-                                                        "分辨率最小为48*48，最大为4096*4096，且不超过2M", Toast.LENGTH_LONG).show();
-                                            }
-                                        });
-                                    }
+                                            });
+                                        }
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                 }
@@ -238,7 +259,7 @@ private  int flag=0;
             public void onClick(View view) {
                 switch (view.getId()){
                     case R.id.sign_button:
-                        AlertDialog.Builder dialog = new AlertDialog.Builder(Sign.this);
+                        final AlertDialog.Builder dialog = new AlertDialog.Builder(Sign.this);
                         dialog.setTitle("提示");
                         if (flag2==1){
                             if (flag==3){
@@ -246,28 +267,69 @@ private  int flag=0;
                                 new Thread(new Runnable() {
                                     @Override
                                     public void run() {
-                                        AlertDialog.Builder dialog = new AlertDialog.Builder(Sign.this);
+                                        final AlertDialog.Builder dialog = new AlertDialog.Builder(Sign.this);
                                         dialog.setTitle("提示");
                                         response1=face_ways.SearchFacetorken(faceToken);
-                                        String result = new String(response1.getContent());
+                                        //String result = new String(response1.getContent());
+                                       //faceToken1=new Analysis_response(response1).getFaceToken();
+                                        //Log.e("response1",response1.toString());
+                                        if (response1.getStatus() != 200 || response1 == null) {
+                                            runOnUiThread(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    AlertDialog.Builder dialog = new AlertDialog.Builder(Sign.this);
+                                                    dialog.setTitle("提示");
+                                                    dialog.setMessage("并发数限制，请重新签到！");
+                                                    dialog.setCancelable(false);
+                                                    dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                                        @Override
+                                                        public void onClick(DialogInterface dialogInterface, int i) {
 
+                                                        }
+                                                    });
+                                                    dialog.show();
+                                                }
+                                            });
+                                        }else
+                                        {
+                                            runOnUiThread(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    dialog.setMessage("签到成功！");
+                                                    dialog.setCancelable(false);
+                                                    dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                                        @Override
+                                                        public void onClick(DialogInterface dialogInterface, int i) {
+                                                            SQLiteDatabase db=dbhelper.getWritableDatabase();
+                                                            SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss",
+                                                                    Locale.getDefault());
+                                                            String date=simpleDateFormat.format(new java.util.Date());
+                                                            ContentValues values = new ContentValues();
+                                                            ContentValues values2=new ContentValues();
+                                                            values2.put("sign_number",user.getSign_number()+1);
+                                                            values.put("face_token",faceToken);
+                                                            values.put("name", user.getName());
+                                                            values.put("status",1);//1为已签到，正常
+                                                            values.put("sign_time",date);
+                                                            values.put("id_number", user.getId_number());
+                                                            values.put("location",location);
+                                                            Log.e("faceToken",faceToken);
+                                                            //插入表中
+                                                            //db.insert("user",null,values);
+                                                            dbhelper.insert(db, "sign", values);
+                                                            dbhelper.update(db,"user",values2,"id_number=?",
+                                                                    new String[]{user.getId_number()});
+                                                            values2.clear();
 
-                                        //得到人脸集合中的最符合一个的置信度
-                                        float confidence=analysis_response.getConfidence();
-                                        Log.e("999999999999999999",String.valueOf(confidence));
-                                        Log.e("result",result);
-
-                                        dialog.setMessage("签到成功！");
-                                        dialog.setCancelable(false);
-                                        dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                                            @Override
-                                            public void onClick(DialogInterface dialogInterface, int i) {
-                                                Intent intent = new Intent(Sign.this, Sign.class);
-                                                startActivity(intent);
-                                            }
-                                        });
-                                        dialog.show();
-
+                                                            values.clear();
+                                                            Intent intent = new Intent(Sign.this, Student_Main.class);
+                                                            startActivity(intent);
+                                                        }
+                                                    });
+                                                    dialog.show();
+                                                }
+                                            });
+                                        }
                                     }
                                 }).start();
 
@@ -295,6 +357,7 @@ private  int flag=0;
                             dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
+
                                     Intent intent = new Intent(Sign.this, Sign.class);
                                     startActivity(intent);
                                 }
@@ -363,7 +426,7 @@ private  int flag=0;
 
                     bitmap = BitmapFactory.decodeStream(getContentResolver()
                             .openInputStream(imageuri));
-                    Log.e("uri1111111111", imageuri.toString());
+                   // Log.e("uri1111111111", imageuri.toString());
                     flag=1;
                     picture.setImageBitmap(bitmap);
                 } catch (FileNotFoundException e) {

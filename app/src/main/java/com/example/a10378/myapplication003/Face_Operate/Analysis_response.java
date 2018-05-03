@@ -71,11 +71,9 @@ public class Analysis_response {
                 e.printStackTrace();
             }
 
-
             //取出置信度
                 confidence=Float.parseFloat(json.optJSONArray("results").optJSONObject(0).optString("confidence"));
                 Log.e("confidence",String.valueOf(confidence));
-
 
             return confidence;
         }

@@ -35,6 +35,11 @@ private EditText editText=null;
 private int flag=-1;
 private int flag2=0;
 private String location="";
+private int type=-1;
+private String Province;
+private String City;
+private String District;
+private String Street;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -64,7 +69,9 @@ private String location="";
                     imageView.setVisibility(View.GONE);
                     editText.setVisibility(View.VISIBLE);
                     Intent intent = new Intent(Leave.this, Main2Activity.class);
+                    type=0;
                     intent.putExtra("user",user);
+                    intent.putExtra("type",type);
                     startActivity(intent);
             }
         });
@@ -72,12 +79,15 @@ private String location="";
             @Override
             public void onClick(View v) {
                 SQLiteDatabase db=dbhelper.getWritableDatabase();
-                Cursor cursor=db.rawQuery("select* from leave where id_number =? ",new String[]{user.getId_number()});
+                //获取位置数据
+                Cursor cursor=db.rawQuery("select* from location where id_number =? and location_type=? ",new String[]{user.getId_number(),"0"});
                 if (cursor.moveToFirst()) {
                     do {
-
-
-                         location=cursor.getString(cursor.getColumnIndex("location"));
+                        Province=cursor.getString(cursor.getColumnIndex("Province"));
+                        City=cursor.getString(cursor.getColumnIndex("City"));
+                        District=cursor.getString(cursor.getColumnIndex("District"));
+                        Street=cursor.getString(cursor.getColumnIndex("Street"));
+                        location=Province+City+District+Street;
                         editText.setText("当前位置:"+location);
                         Log.e("结果：",location);
                         Toast.makeText(Leave.this,location, Toast.LENGTH_SHORT).show();
@@ -163,7 +173,8 @@ private String location="";
                         values.put("cause",s3);
                         values.put("name",user.getName());
                        // dbhelper.insert(db,"leave",values);
-                        dbhelper.update(db, "leave", values, "id_number=?", new String[]{user.getId_number()});
+                        dbhelper.insert(db,"leave",values);
+                        //dbhelper.update(db, "leave", values, "id_number=?", new String[]{user.getId_number()});
                         values.clear();
                         db.close();
                         Toast.makeText(Leave.this, "填写成功！", Toast.LENGTH_SHORT).show();

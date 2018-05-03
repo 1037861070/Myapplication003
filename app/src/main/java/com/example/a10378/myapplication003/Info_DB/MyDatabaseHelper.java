@@ -12,7 +12,7 @@ import android.widget.Toast;
  */
 //数据库操作
 public class MyDatabaseHelper extends SQLiteOpenHelper{
-    //建立三个表，分别为user、leave、sign
+    //建立四个表，分别为user、leave、sign、location
     //private SQLiteDatabase db;
 
     public static final String user="CREATE TABLE \"user\" (\n" +
@@ -29,6 +29,7 @@ public class MyDatabaseHelper extends SQLiteOpenHelper{
             "\t`sign_id`\tINTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,\n" +
             "\t`id_number`\tTEXT,\n" +
             "\t`name`\tTEXT,\n" +
+            "\t`face_token`\tTEXT,\n" +
             "\t`status`\tINTEGER,\n" +
             "\t`sign_time`\tTEXT,\n" +
             "\t`location`\tTEXT\n" +
@@ -36,11 +37,23 @@ public class MyDatabaseHelper extends SQLiteOpenHelper{
     public  static final String leave="CREATE TABLE `leave` (\n" +
             "\t`leave_id`\tINTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,\n" +
             "\t`id_number`\tTEXT,\n" +
+            "\t`type`\tINTEGER,\n" +
             "\t`name`\tTEXT,\n" +
             "\t`location`\tTEXT,\n" +
             "\t`start_time`\tTEXT,\n" +
             "\t`end_time`\tTEXT,\n" +
             "\t`cause`\tTEXT\n" +
+            ")";
+    public  static final String location="CREATE TABLE `location` (\n" +
+            "\t`location_id`\tINTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,\n" +
+            "\t`id_number`\tTEXT,\n" +
+            "\t`location_type`\tINTEGER,\n" +
+            "\t`Latitude`\tREAL,\n" +
+            "\t`Longitude`\tREAL,\n" +
+            "\t`Province`\tTEXT,\n" +
+            "\t`City`\tTEXT,\n" +
+            "\t`District`\tTEXT,\n" +
+            "\t`Street`\tTEXT\n" +
             ")";
     private Context mcontext;
     public MyDatabaseHelper(Context context, String name, SQLiteDatabase.CursorFactory factory,int version){
@@ -54,6 +67,7 @@ public class MyDatabaseHelper extends SQLiteOpenHelper{
         db.execSQL(sign);
         db.execSQL(user);
         db.execSQL(leave);
+        db.execSQL(location);
         Toast.makeText(mcontext,"Create succeeded",Toast.LENGTH_SHORT).show();
     }
 
@@ -63,6 +77,7 @@ public class MyDatabaseHelper extends SQLiteOpenHelper{
      db.execSQL("drop table if exists user");
      db.execSQL("drop table if exists sign");
      db.execSQL("drop table if exists leave");
+     db.execSQL("drop table if exists location");
      onCreate(db);
     }
     //插入操作
