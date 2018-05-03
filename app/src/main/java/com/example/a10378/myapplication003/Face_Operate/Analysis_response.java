@@ -72,12 +72,25 @@ public class Analysis_response {
             }
 
             //取出置信度
-                confidence=Float.parseFloat(json.optJSONArray("results").optJSONObject(0).optString("confidence"));
-                Log.e("confidence",String.valueOf(confidence));
+            String facetoken=json.optJSONArray("results").optJSONObject(0).optString("face_token");
 
+            String confidence1=json.optJSONArray("results").optJSONObject(0).optString("confidence");
+            confidence=Float.parseFloat(confidence1);
+            Log.e("confidence",String.valueOf(confidence));
             return confidence;
         }
-        else
             return confidence;
+    }
+
+    public Response getResponse() {
+        return response;
+    }
+
+    public void setResponse(Response response) {
+        this.response = response;
+    }
+
+    public void setFaceToken(String faceToken) {
+        this.faceToken = faceToken;
     }
 }

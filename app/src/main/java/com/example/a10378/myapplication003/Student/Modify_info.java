@@ -43,7 +43,7 @@ private MyDatabaseHelper dbhelper;
         editText3=findViewById(R.id.modify_inputidnumber);//学号
 
         editText4=findViewById(R.id.modify_inputpsd);//密码
-        editText5=findViewById(R.id.register_inputimage);//人脸图片地址
+
 
         textView1=findViewById(R.id.textView6);
         dbhelper=new MyDatabaseHelper(this,"dbst.db",null,2); //数据库建立并升级

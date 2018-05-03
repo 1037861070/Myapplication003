@@ -270,6 +270,10 @@ private  int flag=0;
                                         final AlertDialog.Builder dialog = new AlertDialog.Builder(Sign.this);
                                         dialog.setTitle("提示");
                                         response1=face_ways.SearchFacetorken(faceToken);
+                                        analysis_response.setResponse(response1);
+                                        final float confidence=analysis_response.getConfidence();
+
+                                        Log.e("confidence:",String .valueOf(confidence));
                                         //String result = new String(response1.getContent());
                                        //faceToken1=new Analysis_response(response1).getFaceToken();
                                         //Log.e("response1",response1.toString());
@@ -292,43 +296,68 @@ private  int flag=0;
                                             });
                                         }else
                                         {
-                                            runOnUiThread(new Runnable() {
-                                                @Override
-                                                public void run() {
-                                                    dialog.setMessage("签到成功！");
-                                                    dialog.setCancelable(false);
-                                                    dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                                                        @Override
-                                                        public void onClick(DialogInterface dialogInterface, int i) {
-                                                            SQLiteDatabase db=dbhelper.getWritableDatabase();
-                                                            SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss",
-                                                                    Locale.getDefault());
-                                                            String date=simpleDateFormat.format(new java.util.Date());
-                                                            ContentValues values = new ContentValues();
-                                                            ContentValues values2=new ContentValues();
-                                                            values2.put("sign_number",user.getSign_number()+1);
-                                                            values.put("face_token",faceToken);
-                                                            values.put("name", user.getName());
-                                                            values.put("status",1);//1为已签到，正常
-                                                            values.put("sign_time",date);
-                                                            values.put("id_number", user.getId_number());
-                                                            values.put("location",location);
-                                                            Log.e("faceToken",faceToken);
-                                                            //插入表中
-                                                            //db.insert("user",null,values);
-                                                            dbhelper.insert(db, "sign", values);
-                                                            dbhelper.update(db,"user",values2,"id_number=?",
-                                                                    new String[]{user.getId_number()});
-                                                            values2.clear();
+                                            //只有相似度大于90%以上才会验证通过
+                                            if (confidence>90.0){
+                                                runOnUiThread(new Runnable() {
+                                                    @Override
+                                                    public void run() {
+                                                        dialog.setMessage("签到成功！"+"\n"+
+                                                                "匹配正确率:"+String .valueOf(confidence)+"%");
+                                                        dialog.setCancelable(false);
+                                                        dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                                            @Override
+                                                            public void onClick(DialogInterface dialogInterface, int i) {
+                                                                SQLiteDatabase db=dbhelper.getWritableDatabase();
+                                                                SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss",
+                                                                        Locale.getDefault());
+                                                                String date=simpleDateFormat.format(new java.util.Date());
+                                                                ContentValues values = new ContentValues();
+                                                                ContentValues values2=new ContentValues();
+                                                                values2.put("sign_number",user.getSign_number()+1);
+                                                                values.put("face_token",faceToken);
+                                                                values.put("name", user.getName());
+                                                                values.put("status",1);//1为已签到，正常
+                                                                values.put("sign_time",date);
+                                                                values.put("id_number", user.getId_number());
+                                                                values.put("location",location);
+                                                                Log.e("faceToken",faceToken);
+                                                                //插入表中
+                                                                //db.insert("user",null,values);
+                                                                dbhelper.insert(db, "sign", values);
+                                                                dbhelper.update(db,"user",values2,"id_number=?",
+                                                                        new String[]{user.getId_number()});
+                                                                values2.clear();
 
-                                                            values.clear();
-                                                            Intent intent = new Intent(Sign.this, Student_Main.class);
-                                                            startActivity(intent);
-                                                        }
-                                                    });
-                                                    dialog.show();
-                                                }
-                                            });
+                                                                values.clear();
+                                                                Intent intent = new Intent(Sign.this, Student_Main.class);
+                                                                startActivity(intent);
+                                                            }
+                                                        });
+                                                        dialog.show();
+                                                    }
+                                                });
+                                            }
+                                            else {
+                                                runOnUiThread(new Runnable() {
+                                                    @Override
+                                                    public void run() {
+                                                        AlertDialog.Builder dialog = new AlertDialog.Builder(Sign.this);
+                                                        dialog.setTitle("提示");
+                                                        dialog.setMessage("签到失败！"+"\n"+
+                                                                "匹配正确率:"+String .valueOf(confidence)+"%");
+                                                        dialog.setCancelable(false);
+                                                        dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                                            @Override
+                                                            public void onClick(DialogInterface dialogInterface, int i) {
+                                                                Intent intent = new Intent(Sign.this, Sign.class);
+                                                                startActivity(intent);
+                                                            }
+                                                        });
+                                                        dialog.show();
+                                                    }
+                                                });
+                                            }
+
                                         }
                                     }
                                 }).start();

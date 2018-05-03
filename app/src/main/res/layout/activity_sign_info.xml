@@ -6,7 +6,7 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/bg10">
+    android:background="@drawable/bk_student_main">
 
 
     <ListView
@@ -14,7 +14,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:divider="#800000"
-        android:cacheColorHint="#c0c0c0"
+
         android:dividerHeight="1dp"
-        android:fadingEdge="vertical"/>
+        />
 </LinearLayout>

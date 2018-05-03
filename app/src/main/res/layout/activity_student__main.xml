@@ -11,12 +11,6 @@
     <!-- padding 内边距   layout_margin 外边距
         android:layout_alignParentTop 布局的位置是否处于顶部 -->
 
-    <RelativeLayout
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content">
-
-
-    </RelativeLayout>
 
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
@@ -57,7 +51,7 @@
             android:background="@drawable/student_2"
             app:layout_constraintBottom_toTopOf="@+id/textView3"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.134"
+            app:layout_constraintHorizontal_bias="0.236"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -75,7 +69,7 @@
             android:background="@drawable/student_3"
             app:layout_constraintBottom_toTopOf="@+id/textView5"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.708"
+            app:layout_constraintHorizontal_bias="0.802"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="1.0" />
@@ -95,10 +89,10 @@
             android:background="@drawable/student_4"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.173"
+            app:layout_constraintHorizontal_bias="0.235"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.847" />
+            app:layout_constraintVertical_bias="0.769" />
 
         <ImageView
             android:id="@+id/student_5"
@@ -114,21 +108,21 @@
             android:background="@drawable/exit_button"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.711"
+            app:layout_constraintHorizontal_bias="0.779"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.841" />
+            app:layout_constraintVertical_bias="0.763" />
 
 
         <TextView
             android:id="@+id/info_management"
-            android:layout_width="82dp"
-            android:layout_height="27dp"
+            android:layout_width="91dp"
+            android:layout_height="22dp"
             android:layout_alignParentBottom="true"
             android:layout_alignParentStart="true"
             android:layout_marginBottom="16dp"
             android:layout_marginEnd="8dp"
-            android:layout_marginStart="64dp"
+            android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:text="个人信息"
             android:textColor="#800000"
@@ -136,15 +130,15 @@
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.008"
+            app:layout_constraintHorizontal_bias="0.241"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="1.0" />
+            app:layout_constraintVertical_bias="0.94" />
 
         <TextView
             android:id="@+id/exit"
             android:layout_width="82dp"
-            android:layout_height="22dp"
+            android:layout_height="27dp"
 
             android:layout_above="@+id/textView2"
             android:layout_alignStart="@+id/student_3"
@@ -158,17 +152,17 @@
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.755"
+            app:layout_constraintHorizontal_bias="0.807"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.962" />
+            app:layout_constraintVertical_bias="0.919" />
 
         <TextView
 
             android:id="@+id/Leave_record"
-            android:layout_width="82dp"
+            android:layout_width="87dp"
 
-            android:layout_height="22dp"
+            android:layout_height="27dp"
             android:layout_alignStart="@+id/textView2"
             android:layout_below="@+id/student_3"
             android:layout_marginBottom="8dp"
@@ -181,17 +175,17 @@
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.071"
+            app:layout_constraintHorizontal_bias="0.18"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.448" />
+            app:layout_constraintVertical_bias="0.456" />
 
         <TextView
 
 
             android:id="@+id/sign_record"
             android:layout_width="82dp"
-            android:layout_height="22dp"
+            android:layout_height="26dp"
             android:layout_alignBaseline="@+id/textView3"
             android:layout_alignBottom="@+id/textView3"
             android:layout_alignStart="@+id/student_3"
@@ -205,7 +199,7 @@
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.755"
+            app:layout_constraintHorizontal_bias="0.832"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.0" />

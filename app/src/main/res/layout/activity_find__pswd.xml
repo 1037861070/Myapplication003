@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/bg12"
+    android:background="@drawable/bg02"
     tools:context="com.example.a10378.myapplication003.Student.Find_Pswd">
 
 
