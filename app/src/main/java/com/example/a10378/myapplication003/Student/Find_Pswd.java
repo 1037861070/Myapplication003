@@ -182,7 +182,7 @@ private int flag=-1;
         textView2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(Find_Pswd.this, Find_Pswd.class);
+                Intent intent = new Intent(Find_Pswd.this, MainActivity.class);
                 startActivity(intent);
             }
         });

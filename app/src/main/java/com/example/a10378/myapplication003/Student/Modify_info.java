@@ -15,6 +15,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.a10378.myapplication003.Info_DB.MyDatabaseHelper;
 import com.example.a10378.myapplication003.R;
@@ -45,14 +46,13 @@ private MyDatabaseHelper dbhelper;
         editText4=findViewById(R.id.modify_inputpsd);//密码
 
 
-        textView1=findViewById(R.id.textView6);
+        textView1=findViewById(R.id.textView6);//签到次数
         dbhelper=new MyDatabaseHelper(this,"dbst.db",null,2); //数据库建立并升级
         //获取传递过来的数据
-        Intent intent=this.getIntent();
-        Bundle bundle=intent.getExtras();
+
         user=(use_info) getIntent().getSerializableExtra("user");
-        //Log.d("333333",user.getName()+user.getSign_number()+user.getClassname());
-        //Toast.makeText(this,user.getClassname()+user.getId_number(),Toast.LENGTH_SHORT).show();
+        Log.e("333333",user.getName()+user.getSign_number()+user.getClassname());
+        Toast.makeText(Modify_info.this,user.getClassname()+user.getId_number(),Toast.LENGTH_SHORT).show();
     Button btn1=findViewById(R.id.modifyinfo_button);
     //点击确定修改按钮
     btn1.setOnClickListener(new View.OnClickListener() {
@@ -63,7 +63,7 @@ private MyDatabaseHelper dbhelper;
             String s3=editText3.getText().toString();
             SQLiteDatabase db=dbhelper.getWritableDatabase();
             String s4=editText4.getText().toString();
-            Log.d("333333",s3);
+           // Log.d("333333",s3);
             switch (view.getId()){
                 case R.id.modifyinfo_button://更新表操作
                     if (checkall(s1,s2,s4))
@@ -97,9 +97,7 @@ private MyDatabaseHelper dbhelper;
         editText3.setText(user.getId_number());
     editText3.setEnabled(false);
         editText4.setText(user.getPassword());
-    editText5.setEnabled(false);
         textView1.setText(String.valueOf(user.getSign_number()));
-
         //判断姓名输入是否规范
 
         editText1.addTextChangedListener(new TextWatcher() {
