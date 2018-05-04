@@ -11,6 +11,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.provider.MediaStore;
@@ -21,9 +22,12 @@ import android.support.v4.content.FileProvider;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -40,6 +44,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Find_Pswd extends AppCompatActivity {
 private ImageView imageView1=null;
@@ -53,6 +59,8 @@ private Response response=new Response();
 private byte[] arr = null;
 private String face_token=null;
 private int flag=-1;
+private EditText editText=null;
+private Drawable drawable=null;
     private Response response1=null;
 @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,8 +69,38 @@ private int flag=-1;
         //实时获取相机拍照
         imageView1=findViewById(R.id.leave_link);
         imageView2=findViewById(R.id.picure_find_pswd);
-
+        editText=findViewById(R.id.findpwd_idnumber);
         textView=findViewById(R.id.textView4);
+        //输入学号
+        editText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                String ss = "^[0-9]{13}$";
+                Pattern pattern = Pattern.compile(ss);
+                Matcher matcher = pattern.matcher(s.toString());
+
+                if (matcher.matches()) {
+                    drawable = getDrawable(R.drawable.icon1);
+                    drawable.setBounds(0, 0, 75, 75);
+                    editText.setError("right", drawable);
+
+                } else {
+                    drawable = getDrawable(R.drawable.icon2);
+                    drawable.setBounds(0, 0, 75, 75);
+                    editText.setError("error", drawable);
+                }
+            }
+        });
         final Button btn3=findViewById(R.id.check_face);
         //检测人脸
         btn3.setOnClickListener(new View.OnClickListener() {
@@ -192,84 +230,100 @@ private int flag=-1;
                 AlertDialog.Builder dialog=new AlertDialog.Builder(Find_Pswd.this);
                 dialog.setTitle("提示");
                 if (flag==3){
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            response1=face_ways.SearchFacetorken(face_token);
-                            //获取置信度
-                            analysis_response.setResponse(response1);
-                            final float confidence=analysis_response.getConfidence();
-
-                            Log.e("confidence:",String .valueOf(confidence));
-                            if (response1.getStatus() != 200 || response1 == null) {
-                                runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        AlertDialog.Builder dialog = new AlertDialog.Builder(Find_Pswd.this);
-                                        dialog.setTitle("提示");
-                                        dialog.setMessage("并发数限制，请重新验证！");
-                                        dialog.setCancelable(false);
-                                        dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                                            @Override
-                                            public void onClick(DialogInterface dialogInterface, int i) {
-
-                                            }
-                                        });
-                                        dialog.show();
-                                    }
-                                });
-                            }else
-                            {
-                                if (confidence>90.0){
-                                    runOnUiThread(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            AlertDialog.Builder dialog = new AlertDialog.Builder(Find_Pswd.this);
-                                            dialog.setTitle("提示");
-                                            dialog.setMessage("验证成功！"+"\n"+
-                                                    "匹配正确率:"+String .valueOf(confidence)+"%");
-                                            dialog.setCancelable(false);
-                                            dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                                                @Override
-                                                public void onClick(DialogInterface dialogInterface, int i) {
-                                                    Intent intent = new Intent(Find_Pswd.this, Modify_Pswd.class);
-                                                    startActivity(intent);
-                                                }
-                                            });
-                                            dialog.show();
-                                        }
-                                    });
-                                }
-                                else {
-                                    runOnUiThread(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            AlertDialog.Builder dialog = new AlertDialog.Builder(Find_Pswd.this);
-                                            dialog.setTitle("提示");
-                                            dialog.setMessage("验证失败！"+"\n"+
-                                                    "匹配正确率:"+String .valueOf(confidence)+"%");
-                                            dialog.setCancelable(false);
-                                            dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                                                @Override
-                                                public void onClick(DialogInterface dialogInterface, int i) {
-                                                    Intent intent = new Intent(Find_Pswd.this, Find_Pswd.class);
-                                                    startActivity(intent);
-                                                }
-                                            });
-                                            dialog.show();
-                                        }
-                                    });
-                                }
-
+                    final String id_number=editText.getText().toString();
+                    if (!check_idnumber(id_number)){
+                        dialog.setMessage("学号输入不符合要求！");
+                        dialog.setCancelable(false);
+                        dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
 
                             }
-                        }
-                    }).start();
+                        });
+                        dialog.show();
+                    }
+                    else {
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                response1=face_ways.SearchFacetorken(face_token);
+                                //获取置信度
+                                analysis_response.setResponse(response1);
+                                final float confidence=analysis_response.getConfidence();
+
+                                Log.e("confidence:",String .valueOf(confidence));
+                                if (response1.getStatus() != 200 || response1 == null) {
+                                    runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            AlertDialog.Builder dialog = new AlertDialog.Builder(Find_Pswd.this);
+                                            dialog.setTitle("提示");
+                                            dialog.setMessage("并发数限制，请重新验证！");
+                                            dialog.setCancelable(false);
+                                            dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                                @Override
+                                                public void onClick(DialogInterface dialogInterface, int i) {
+
+                                                }
+                                            });
+                                            dialog.show();
+                                        }
+                                    });
+                                }else
+                                {
+                                    if (confidence>90.0){
+                                        runOnUiThread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                AlertDialog.Builder dialog = new AlertDialog.Builder(Find_Pswd.this);
+                                                dialog.setTitle("提示");
+                                                dialog.setMessage("验证成功！"+"\n"+
+                                                        "匹配正确率:"+String .valueOf(confidence)+"%");
+                                                dialog.setCancelable(false);
+                                                dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                                    @Override
+                                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                                        Intent intent = new Intent(Find_Pswd.this, Modify_Pswd.class);
+                                                        intent.putExtra("id_number",id_number);
+                                                        startActivity(intent);
+                                                    }
+                                                });
+                                                dialog.show();
+                                            }
+                                        });
+                                    }
+                                    else {
+                                        runOnUiThread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                AlertDialog.Builder dialog = new AlertDialog.Builder(Find_Pswd.this);
+                                                dialog.setTitle("提示");
+                                                dialog.setMessage("验证失败！"+"\n"+
+                                                        "匹配正确率:"+String .valueOf(confidence)+"%");
+                                                dialog.setCancelable(false);
+                                                dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                                    @Override
+                                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                                        Intent intent = new Intent(Find_Pswd.this, Find_Pswd.class);
+                                                        startActivity(intent);
+                                                    }
+                                                });
+                                                dialog.show();
+                                            }
+                                        });
+                                    }
+
+
+                                }
+                            }
+                        }).start();
+                    }
+
                 }
                 else {
                     dialog.setMessage("条件不符合！");
                     if (flag==1){
-                        dialog.setMessage("无图片！");
+                        dialog.setMessage("无人脸图片！");
                     }
                     else if (flag==2)
                     {
@@ -352,6 +406,16 @@ private int flag=-1;
             default:
                 break;
         }
+
+    }
+    private boolean check_idnumber(String s) {
+        String ss = "^[0-9]{13}$";
+        Pattern pattern = Pattern.compile(ss);
+        Matcher matcher = pattern.matcher(s);
+        if (matcher.matches())
+            return true;
+        else
+            return false;
     }
 
 }

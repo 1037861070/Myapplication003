@@ -80,8 +80,8 @@
             android:layout_alignParentTop="true"
             android:layout_toEndOf="@+id/findpsdview1"
             android:background="@drawable/background_login_div_bg"
-            android:hint="学号(6-15位英文和字母)"
-
+            android:hint=""
+            android:editable="false"
 
             android:singleLine="true" />
 

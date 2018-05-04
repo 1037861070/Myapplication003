@@ -47,6 +47,7 @@ public class MyDatabaseHelper extends SQLiteOpenHelper{
     public  static final String location="CREATE TABLE `location` (\n" +
             "\t`location_id`\tINTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,\n" +
             "\t`id_number`\tTEXT,\n" +
+            "\t`location_time`\tTEXT,\n" +
             "\t`location_type`\tINTEGER,\n" +
             "\t`Latitude`\tREAL,\n" +
             "\t`Longitude`\tREAL,\n" +

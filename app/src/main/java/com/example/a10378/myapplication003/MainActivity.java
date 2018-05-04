@@ -190,7 +190,7 @@ public class MainActivity extends AppCompatActivity {
                                 } else {
                                     Toast.makeText(MainActivity.this, "登陆成功！", Toast.LENGTH_SHORT).show();
                                     Intent intent = new Intent(MainActivity.this, Teacher_Main.class);
-                                    //intent.putExtra("user", user);
+                                    intent.putExtra("user", user);
                                     startActivity(intent);
                                 }
                             }
@@ -233,8 +233,7 @@ public class MainActivity extends AppCompatActivity {
             dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
-                    Intent intent = new Intent(MainActivity.this, MainActivity.class);
-                    startActivity(intent);
+
                 }
             });
             dialog.show();

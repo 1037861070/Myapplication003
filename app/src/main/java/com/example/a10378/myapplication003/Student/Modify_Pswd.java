@@ -29,44 +29,20 @@ private EditText editText2=null;
 private EditText editText3=null;
 private MyDatabaseHelper dbhelper;
 private Drawable drawable;
+    String id_number;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_modify_pswd);
+        id_number=getIntent().getStringExtra("id_number");
         Button bt1=findViewById(R.id.modify_button);
+        Button btn2=findViewById(R.id.modify_back_button);
         editText1=findViewById(R.id.findpsdtext1);
         editText2=findViewById(R.id.findpsdtext2);
         editText3=findViewById(R.id.findpsdtext3);
         dbhelper=new MyDatabaseHelper(this,"dbst.db",null,2); //数据库建立并升级
-
-        editText1.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-            }
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-            }
-            @Override
-            public void afterTextChanged(Editable editable) {
-                String ss="^[0-9]{13}$";
-                Pattern pattern = Pattern.compile(ss);
-                Matcher matcher = pattern.matcher(editable.toString());
-                //int len=editable.toString().length();
-                if (matcher.matches()) {
-                    drawable = getDrawable(R.drawable.icon1);
-                    drawable.setBounds(0, 0, 75, 75);
-                    editText1.setError("right", drawable);
-                    //Toast.makeText(MainActivity.this, "密码格式正确！", Toast.LENGTH_SHORT).show();
-                }
-                else
-                {
-                    drawable=getDrawable(R.drawable.icon2);
-                    drawable.setBounds(0,0,75,75);
-                    editText1.setError("error",drawable);
-                }
-            }
-        });
+        editText1.setText(id_number);
         editText2.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -93,6 +69,14 @@ private Drawable drawable;
                     drawable.setBounds(0,0,75,75);
                     editText2.setError("error",drawable);
                 }
+            }
+        });
+        btn2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Modify_Pswd.this, Find_Pswd.class);
+               // intent.putExtra("id_number",id_number);
+                startActivity(intent);
             }
         });
         editText3.addTextChangedListener(new TextWatcher() {
@@ -157,6 +141,7 @@ private Drawable drawable;
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
                                     Intent intent = new Intent(Modify_Pswd.this, Modify_Pswd.class);
+                                    intent.putExtra("id_number",id_number);
                                     startActivity(intent);
                                 }
                             });
@@ -187,6 +172,7 @@ private Drawable drawable;
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
                     Intent intent = new Intent(Modify_Pswd.this, Modify_Pswd.class);
+                    intent.putExtra("id_number",id_number);
                     startActivity(intent);
                 }
             });

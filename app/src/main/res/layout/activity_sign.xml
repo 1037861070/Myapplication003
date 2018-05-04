@@ -94,7 +94,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.842" />
+            app:layout_constraintVertical_bias="0.79" />
 
         <ImageView
             android:id="@+id/location"
@@ -111,7 +111,7 @@
             app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="1.0" />
+            app:layout_constraintVertical_bias="0.941" />
 
         <Button
             android:id="@+id/signback_button"
@@ -119,7 +119,7 @@
             android:layout_height="wrap_content"
 
             android:layout_marginBottom="8dp"
-            android:layout_marginStart="4dp"
+            android:layout_marginStart="28dp"
 
             android:layout_marginTop="464dp"
             android:background="@drawable/button_style"
@@ -128,7 +128,7 @@
             app:layout_constraintEnd_toStartOf="@+id/findpasdback_button"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="1.0" />
+            app:layout_constraintVertical_bias="0.428" />
 
         <Button
             android:id="@+id/sign_button"
@@ -143,10 +143,10 @@
             android:text="提交"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.971"
+            app:layout_constraintHorizontal_bias="0.895"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="1.0" />
+            app:layout_constraintVertical_bias="0.951" />
 
         <TextView
             android:id="@+id/textView4"

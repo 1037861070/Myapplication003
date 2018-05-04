@@ -1,11 +1,15 @@
 package com.example.a10378.myapplication003.Teacher;
 //签到记录
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -16,9 +20,11 @@ import com.example.a10378.myapplication003.Info_DB.sign_info;
 import com.example.a10378.myapplication003.MainActivity;
 import com.example.a10378.myapplication003.R;
 import com.example.a10378.myapplication003.Info_DB.use_info;
+import com.example.a10378.myapplication003.Student.Sign;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class show_info extends AppCompatActivity {
@@ -89,7 +95,25 @@ public class show_info extends AppCompatActivity {
                 }while (cursor.moveToNext());
             }
             cursor.close();
-            //添加适配器，将查询到的数据添加在适配器中
+           //添加事件响应
+            listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+
+                    AlertDialog.Builder dialog = new AlertDialog.Builder(show_info.this);
+                    dialog.setTitle("提示");
+                    dialog.setMessage("test");
+                    dialog.setCancelable(false);
+                    dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+
+                        }
+                    });
+                    dialog.show();
+                }
+            });
 
         }
         //显示统计信息

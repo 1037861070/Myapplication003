@@ -37,6 +37,28 @@
         android:layout_height="350dp"
         >
 
+        <EditText
+            android:id="@+id/teacher_position"
+            android:layout_width="333dp"
+            android:layout_height="39dp"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_toEndOf="@+id/findpsdview1"
+            android:background="@drawable/background_login_div_bg"
+            android:editable="false"
+            android:hint="当前位置："
+            android:singleLine="true"
+            android:textColorHint="#991050"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.505"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0" />
         <ImageView
             android:id="@+id/student_2"
             android:layout_width="92dp"

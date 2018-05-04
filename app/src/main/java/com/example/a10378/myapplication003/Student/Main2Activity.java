@@ -35,8 +35,10 @@ import com.example.a10378.myapplication003.Info_DB.location_info;
 import com.example.a10378.myapplication003.Info_DB.use_info;
 import com.example.a10378.myapplication003.R;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class Main2Activity extends AppCompatActivity {
 public LocationClient locationClient=null;
@@ -77,7 +79,7 @@ private int type=-1;
         type=getIntent().getIntExtra("type",0);
         dbhelper=new MyDatabaseHelper(this,"dbst.db",null,2);
         locationClient=new LocationClient(getApplicationContext());
-        Log.e("user information",user.getId_number());
+        //Log.e("user information",user.getId_number());
         locationClient.registerLocationListener(myListener);//注册监听函数
         SDKInitializer.initialize(getApplicationContext());
         setContentView(R.layout.activity_main2);
@@ -116,13 +118,10 @@ private int type=-1;
             @Override
             public void onClick(View v) {
                 if (flag==0){
+                    SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss",
+                            Locale.getDefault());
+                    String date=simpleDateFormat.format(new java.util.Date());//获取时间
                     SQLiteDatabase db=dbhelper.getWritableDatabase();
-                    StringBuilder currenPosition = new StringBuilder();
-                    currenPosition.append(bdLocation.getProvince()).append(" ");
-                    currenPosition.append(bdLocation.getCity()).append(" ");
-                    currenPosition.append(bdLocation.getDistrict()).append(" ");
-                    currenPosition.append(bdLocation.getStreet());
-                    String s1=currenPosition.toString();
                     ContentValues values=new ContentValues();
                     values.put("id_number",user.getId_number());
                     values.put("location_type",type);
@@ -132,16 +131,23 @@ private int type=-1;
                     values.put("City",bdLocation.getCity());
                     values.put("District",bdLocation.getDistrict());
                     values.put("Street",bdLocation.getStreet());
-                    Log.e("id_numner",user.getClassname());
+                    values.put("location_time",date);
+                   // Log.e("id_numner",user.getClassname());
+                    StringBuilder currenPosition = new StringBuilder();
+                    currenPosition.append("省：").append(bdLocation.getProvince()).append("\n");
+                    currenPosition.append("市：").append(bdLocation.getCity()).append("\n");
+                    currenPosition.append("区：").append(bdLocation.getDistrict()).append("\n");
+                    currenPosition.append("街道：").append(bdLocation.getStreet()).append("\n");
+                    Toast.makeText(Main2Activity.this, date+currenPosition.toString(),
+                            Toast.LENGTH_LONG).show();
                     dbhelper.insert(db,"location",values);
                     values.clear();
                     db.close();
-                    Toast.makeText(Main2Activity.this,s1,
-                            Toast.LENGTH_LONG).show();
                     flag=1;
+
                 }
                else {
-                    Toast.makeText(Main2Activity.this, "已写入！请勿重复点击！"+bdLocation.getCity(),
+                    Toast.makeText(Main2Activity.this, "已写入！请勿重复点击！",
                             Toast.LENGTH_LONG).show();
                 }
 
@@ -152,8 +158,6 @@ private int type=-1;
         //显示百度地图位置
         if (isFirstlocate){
             bdLocation=location;
-            //SQLiteDatabase db=dbhelper.getWritableDatabase();//得到数据库对象，已有则不创建
-
             LatLng ll=new LatLng(location.getLatitude(),location.getLongitude());
             MapStatusUpdate update= MapStatusUpdateFactory.newLatLng(ll);
             baiduMap.animateMapStatus(update);
@@ -168,22 +172,18 @@ private int type=-1;
         MyLocationData locationData=locationBuild.build();
         baiduMap.setMyLocationData(locationData);
          }
+
     private void requestLocation(){
-
-        initLocation();
-        locationClient.start();
-
-    }
-
-    //每五秒更新自己位置
-   private void initLocation(){
         LocationClientOption option=new LocationClientOption();
         option.setCoorType("bd09ll");
         //option.setScanSpan(5000);
         option.setIsNeedAddress(true);
         option.setLocationMode(LocationClientOption.LocationMode.Hight_Accuracy);
         locationClient.setLocOption(option);
+        locationClient.start();
+
     }
+
 
 //权限判定是否符合条件
     @Override

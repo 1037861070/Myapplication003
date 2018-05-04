@@ -15,7 +15,16 @@ public class location_info implements Serializable {
     private String City;//城市
     private String Street;//街道
     private String StreetNumber;//街道号
+    private String location_time;//获取时间
     private int Loctype;//网络类型
+
+    public String getLocation_time() {
+        return location_time;
+    }
+
+    public void setLocation_time(String location_time) {
+        this.location_time = location_time;
+    }
 
     public String getId_number() {
         return id_number;

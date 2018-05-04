@@ -37,6 +37,8 @@ import android.widget.Toast;
 
 import java.io.ByteArrayOutputStream;
 
+import com.baidu.mapapi.model.LatLng;
+import com.baidu.mapapi.utils.DistanceUtil;
 import com.example.a10378.myapplication003.Face_Operate.Analysis_response;
 import com.example.a10378.myapplication003.Face_Operate.Face_Ways;
 import com.example.a10378.myapplication003.Info_DB.MyDatabaseHelper;
@@ -53,6 +55,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.text.DecimalFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 
@@ -72,18 +76,22 @@ public class Sign extends AppCompatActivity {
     private Response response = new Response();
     private Face_Ways face_ways = null;
     private Button check_facebtn=null;
+    double min=9999.0;
     String faceToken = "";
     private int type=-1;
     private Response response1=null;
     private int flag2=0;
     private String  faceToken1="";
+    double time=0.0;
+    double distence=99999.0;
+    DecimalFormat df1=new DecimalFormat("#0.00");//精确到0.01米
+    private LatLng latLng1=null,latLng2=null;
 private  int flag=0;
+String distence1,min1;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign);
-
-
         dbhelper = new MyDatabaseHelper(this, "dbst.db", null, 2); //数据库建立并升级
         user = (use_info) getIntent().getSerializableExtra("user");//获取用户信息
         Toast.makeText(Sign.this, user.getId_number() + user.getPassword(), Toast.LENGTH_SHORT).show();
@@ -129,11 +137,15 @@ private  int flag=0;
                         new String[]{user.getId_number(),"1"});
                 if (cursor.moveToFirst()) {
                     do {
+                        double longitude=cursor.getDouble(cursor.getColumnIndex("Longitude"));//经度
+                         double latitude=cursor.getDouble(cursor.getColumnIndex("Latitude"));//维度
+                        latLng1=new LatLng(latitude,longitude);
+
                         location = cursor.getString(cursor.getColumnIndex("Province"))+
                                 cursor.getString(cursor.getColumnIndex("City"))+
                                 cursor.getString(cursor.getColumnIndex("District"))+
                                 cursor.getString(cursor.getColumnIndex("Street"));
-                        editText.setText("当前位置:" + location);
+                        editText.setText("当前位置:"+location);
                         Toast.makeText(Sign.this, location, Toast.LENGTH_SHORT).show();
                     } while (cursor.moveToNext());
 
@@ -259,9 +271,51 @@ private  int flag=0;
             public void onClick(View view) {
                 switch (view.getId()){
                     case R.id.sign_button:
+                        double longitude=0.0;
+                        double latitude=0.0;
+
+                        SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss",
+                                Locale.getDefault());
+                        final String date=simpleDateFormat.format(new java.util.Date());
+
+                        String location_time="";
                         final AlertDialog.Builder dialog = new AlertDialog.Builder(Sign.this);
                         dialog.setTitle("提示");
                         if (flag2==1){
+                            //时间判定和位置判定
+                            SQLiteDatabase db=dbhelper.getWritableDatabase();
+                            Cursor cursor=db.rawQuery("select* from location where id_number =? and location_type=? ",new String[]{
+                                    "0121410880000","2"});
+                            if (cursor.moveToFirst()) {
+                                do {
+                                     longitude=cursor.getDouble(cursor.getColumnIndex("Longitude"));//经度
+                                     latitude=cursor.getDouble(cursor.getColumnIndex("Latitude"));//维度
+                                     latLng2=new LatLng(latitude,longitude);
+                                     location_time=cursor.getString(cursor.getColumnIndex("location_time"));
+                                    Log.e("location_time",location_time);
+                                }while (cursor.moveToNext());
+                            }
+                            cursor.close();
+                            //获取到相隔距离
+                            distence= DistanceUtil.getDistance(latLng1,latLng2);
+                            distence1=df1.format(distence);
+                            //获取时间间隔,分钟
+                            try {
+                               double time1=simpleDateFormat.parse(location_time).getTime();
+                                double time2=simpleDateFormat.parse(date).getTime();
+                                //获取相差多少分钟
+                                time=Math.abs(time1-time2);
+                                min=time%(1000*24*60*60)%(1000*60*60)/(1000*60);
+                               min1= df1.format(min);
+                                Log.e("time",String.valueOf(time1)+"  "+String .valueOf(time2)+" "+
+                                String .valueOf(min));
+                            } catch (ParseException e) {
+                                e.printStackTrace();
+                            }
+
+
+                            Log.e("distence",String.valueOf(distence)+"  "+String .valueOf(time));
+                            Toast.makeText(Sign.this,location_time, Toast.LENGTH_LONG).show();
                             if (flag==3){
                                 //进行人脸搜索，开启线程
                                 new Thread(new Runnable() {
@@ -296,30 +350,30 @@ private  int flag=0;
                                             });
                                         }else
                                         {
-                                            //只有相似度大于90%以上才会验证通过
-                                            if (confidence>90.0){
+                                            //只有相似度大于90%距离相差100米以内和时间相差小于45min才会验证通过
+                                            if (confidence>90.0&&distence<100.0&&min<40.0){
                                                 runOnUiThread(new Runnable() {
                                                     @Override
                                                     public void run() {
                                                         dialog.setMessage("签到成功！"+"\n"+
-                                                                "匹配正确率:"+String .valueOf(confidence)+"%");
+                                                                "匹配正确率:"+String .valueOf(confidence)+"%"+"\n"+
+                                                        "相差距离:"+distence1+"米"+"\n"+
+                                                                "相差时间:"+min1+"分钟");
                                                         dialog.setCancelable(false);
                                                         dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                                                             @Override
                                                             public void onClick(DialogInterface dialogInterface, int i) {
                                                                 SQLiteDatabase db=dbhelper.getWritableDatabase();
-                                                                SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss",
-                                                                        Locale.getDefault());
-                                                                String date=simpleDateFormat.format(new java.util.Date());
+
                                                                 ContentValues values = new ContentValues();
                                                                 ContentValues values2=new ContentValues();
                                                                 values2.put("sign_number",user.getSign_number()+1);
                                                                 values.put("face_token",faceToken);
                                                                 values.put("name", user.getName());
                                                                 values.put("status",1);//1为已签到，正常
-                                                                values.put("sign_time",date);
+                                                                values.put("sign_time",date+"   相差时间:"+min1+"分钟");
                                                                 values.put("id_number", user.getId_number());
-                                                                values.put("location",location);
+                                                                values.put("location",location+"   相差距离:"+distence1+"米");
                                                                 Log.e("faceToken",faceToken);
                                                                 //插入表中
                                                                 //db.insert("user",null,values);
@@ -344,7 +398,9 @@ private  int flag=0;
                                                         AlertDialog.Builder dialog = new AlertDialog.Builder(Sign.this);
                                                         dialog.setTitle("提示");
                                                         dialog.setMessage("签到失败！"+"\n"+
-                                                                "匹配正确率:"+String .valueOf(confidence)+"%");
+                                                                "匹配正确率:"+String .valueOf(confidence)+"%"+"\n"+
+                                                                "相差距离:"+distence1+"米"+"\n"+
+                                                                "相差时间:"+min1+"分钟");
                                                         dialog.setCancelable(false);
                                                         dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                                                             @Override
@@ -372,8 +428,7 @@ private  int flag=0;
                                 dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialogInterface, int i) {
-                                        Intent intent = new Intent(Sign.this, Sign.class);
-                                        startActivity(intent);
+
                                     }
                                 });
                                 dialog.show();
@@ -421,7 +476,7 @@ private  int flag=0;
         //启动相机
         Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
         Toast.makeText(Sign.this, imageuri.toString(), Toast.LENGTH_LONG).show();
-        Log.d("111", imageuri.toString());
+       // Log.d("111", imageuri.toString());
         intent.putExtra(MediaStore.EXTRA_OUTPUT, imageuri);
         startActivityForResult(intent, 1);
     }

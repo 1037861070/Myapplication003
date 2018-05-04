@@ -83,6 +83,7 @@ private MyDatabaseHelper dbhelper;
 
         }
     });
+    //返回主界面
     Button btn2=findViewById(R.id.modifyinfo_back);
     btn2.setOnClickListener(new View.OnClickListener() {
         @Override

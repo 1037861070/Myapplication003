@@ -21,6 +21,7 @@ import com.example.a10378.myapplication003.Info_DB.MyDatabaseHelper;
 import com.example.a10378.myapplication003.R;
 import com.example.a10378.myapplication003.Info_DB.use_info;
 
+import java.text.DecimalFormat;
 import java.util.Calendar;
 
 public class Leave extends AppCompatActivity {
@@ -40,6 +41,8 @@ private String Province;
 private String City;
 private String District;
 private String Street;
+    String Latitude1;
+    String Longtitude1;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -78,11 +81,16 @@ private String Street;
         editText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                DecimalFormat df=new DecimalFormat("#.00000");//精确到10米
                 SQLiteDatabase db=dbhelper.getWritableDatabase();
                 //获取位置数据
                 Cursor cursor=db.rawQuery("select* from location where id_number =? and location_type=? ",new String[]{user.getId_number(),"0"});
                 if (cursor.moveToFirst()) {
                     do {
+                        double longitude=cursor.getDouble(cursor.getColumnIndex("Longitude"));//经度
+                        double latitude=cursor.getDouble(cursor.getColumnIndex("Latitude"));//维度
+                        Longtitude1=df.format(longitude);
+                        Latitude1=df.format(latitude);
                         Province=cursor.getString(cursor.getColumnIndex("Province"));
                         City=cursor.getString(cursor.getColumnIndex("City"));
                         District=cursor.getString(cursor.getColumnIndex("District"));
@@ -167,7 +175,7 @@ private String Street;
 
                         ContentValues values=new ContentValues();
                         values.put("id_number",id_number);
-                        values.put("location",location);
+                        values.put("location",location+"   坐标:("+Longtitude1+","+Latitude1+")");
                         values.put("start_time",s1);
                         values.put("end_time",s2);
                         values.put("cause",s3);
